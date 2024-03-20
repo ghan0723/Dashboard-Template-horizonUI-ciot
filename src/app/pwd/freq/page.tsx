@@ -238,6 +238,9 @@ export default function SignIn() {
                     <Text lineHeight={'10'} ml={'10px'} color={'#A09997'}>
                       공백문자는 사용 불가
                     </Text>
+
+
+
                   </Flex>
                 </Box>
                 <Flex justifyContent={'center'}>

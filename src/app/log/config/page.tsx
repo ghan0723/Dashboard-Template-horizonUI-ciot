@@ -12,7 +12,9 @@ import {
 // Custom components
 // Assets
 import { fetchLogic } from 'utils/fetchData';
-import { getNameCookie } from 'utils/cookie';
+import { deleteCookie, getNameCookie } from 'utils/cookie';
+import { backIP, frontIP } from 'utils/ipDomain';
+import Swal from 'sweetalert2';
 
 export default function SignIn() {
     // Chakra color mode
@@ -29,12 +31,47 @@ export default function SignIn() {
     const [show, setShow] = React.useState(true);
     const [average, setAverage] = React.useState();
 
-    const fetchData = async () => {
-        await fetchLogic('log/years', setYears);
+    const fetchData = async (cookieName:any) => {
+
+        if(cookieName !== undefined && cookieName !== null) {
+            const result = await fetch(`${backIP}/log/years?username=${cookieName}`)
+            const data = await result.json();
+            let   privilegeStr = '비접속 계정';
+    
+            if(data?.privilege === 1) {
+                setYears(data.years);
+            } else {
+                // 비접속 계정
+                if(data?.privilege !== 2 && data?.privilege !== 3) {
+                    window.location.href = `${frontIP}/auth/sign-in`;
+                } else {
+                    if(data?.privilege === 2)      privilegeStr = '영역별 관리자 계정';
+                    else if(data?.privilege === 3) privilegeStr = '모니터 계정';
+    
+                    Swal.fire({
+                        title: '감사 로그 페이지 오류',
+                        html: `<div style="font-size: 14px;">당신은 ${privilegeStr}이라 접속이 불가능합니다.</div>`,
+                        confirmButtonText: '닫기',
+                        confirmButtonColor: 'orange',
+                        customClass: {
+                          popup: 'custom-popup-class',
+                          title: 'custom-title-class',
+                          confirmButton: 'custom-confirm-button-class',
+                          htmlContainer: 'custom-content-class',
+                          container: 'custom-content-class'
+                        },
+                      }).then(() => {
+                          window.location.href = `${frontIP}/dashboard/default`;
+                      });
+                }
+            }
+        }
     }
+
     React.useEffect(() => {
-        fetchData();
-        getNameCookie();
+        getNameCookie().then(cookieName => {
+            fetchData(cookieName);
+        });
     }, [])
 
     const handleYearChange = async (e: any) => {
