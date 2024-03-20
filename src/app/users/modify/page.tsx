@@ -69,6 +69,7 @@ export default function SignIn() {
     const [cookieName, setCookieName] = React.useState('');
     const [cookiePrivilege, setCookiePrivilege] = React.useState();
     const [cookieRange, setCookieRange] = React.useState('');
+    const [cookieId, setCookieId] = React.useState<number>();
     const router = useRouter();
     React.useEffect(() => {
 
@@ -106,6 +107,7 @@ export default function SignIn() {
             const result = await response.json();
             setCookiePrivilege(result[0].privilege);
             setCookieRange(result[0].ip_ranges);
+            setCookieId(result[0].id);
         } catch (error) {
             console.log('error 발생 : ' + error);
         }
@@ -406,10 +408,21 @@ export default function SignIn() {
                                 value={privilege}
                                 onChange={(event) => handlePrivilegeChange(event)}
                             >
-                                {/* 여기에 옵션을 추가합니다 */}
-                                <option value="1" style={cookiePrivilege !== 1 ? { display: 'none' } : {}}>관리자</option>
-                                <option value="2" style={cookiePrivilege !== 1 ? { display: 'none' } : {}}>영역별 관리자</option>
-                                <option value="3">모니터</option>
+                                {
+                                    cookiePrivilege !== 1 ?
+                                        <option value="3">모니터</option>
+                                        : ( cookieId !== 1 ? 
+                                        <>
+                                            <option value="2">영역별 관리자</option>
+                                            <option value="3">모니터</option>
+                                        </> : 
+                                        <>
+                                        <option value="1">관리자</option>
+                                        <option value="2">영역별 관리자</option>
+                                        <option value="3">모니터</option>
+                                        </>
+                                        )
+                                }
                             </Select>
                             <Box display={cookiePrivilege === 1 ? "block" : 'none'}>
                                 <FormLabel
