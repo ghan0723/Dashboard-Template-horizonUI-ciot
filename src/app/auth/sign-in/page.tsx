@@ -131,11 +131,9 @@ export default function SignIn() {
               confirmButton: 'custom-confirm-button-class'
             },
           })
-          console.error('로그인 실패');
         }
       }
     } catch (error) {
-      console.error('API 호출 오류:', error);
     }
   };
 

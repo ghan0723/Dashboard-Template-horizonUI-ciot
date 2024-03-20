@@ -63,7 +63,6 @@ export default function SignIn() {
             setPrivilege(result[0].privilege !== 1 ? '3' : '1');
             setCookieId(result[0].id);
         } catch (error) {
-            console.log('error 발생 : ' + error);
         }
     }
 
@@ -146,7 +145,7 @@ export default function SignIn() {
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,15}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+=\[\]{}`|;:‘“<>,.?/]).{8,15}$/;
         // 폼 제출 시 사용자 계정명과 비밀번호의 길이를 다시 확인
 
         if (username.length < 5 || username.length > 15) {

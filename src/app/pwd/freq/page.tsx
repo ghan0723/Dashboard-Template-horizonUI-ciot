@@ -62,7 +62,7 @@ export default function SignIn() {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     // 폼 제출 시 사용자 계정명과 비밀번호의 길이를 다시 확인
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,15}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+=\[\]{}`|;:‘“<>,.?/]).{8,15}$/;
 
     if (!passwordRegex.test(passwd)) {
       userSwal(2, 'edit');
@@ -236,7 +236,7 @@ export default function SignIn() {
                       </InputRightElement>
                     </InputGroup>
                     <Text lineHeight={'10'} ml={'10px'} color={'#A09997'}>
-                      ', ", \, 공백문자는 사용 불가
+                      공백문자는 사용 불가
                     </Text>
                   </Flex>
                 </Box>

@@ -90,7 +90,6 @@ export default function SignIn() {
                 setMngRange(result[0].ip_ranges.replace(/,\s*/g, "\n"));
                 setEnabled(result[0].enabled);
             } catch (error) {
-                console.log(' error 발생 : ' + error);
             }
         }
         if (name) {
@@ -109,7 +108,6 @@ export default function SignIn() {
             setCookieRange(result[0].ip_ranges);
             setCookieId(result[0].id);
         } catch (error) {
-            console.log('error 발생 : ' + error);
         }
     }
     const handleClick = () => setShow(!show);
@@ -194,7 +192,7 @@ export default function SignIn() {
 
     const handleSubmit = async (event: any) => {
         event.preventDefault();
-        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,15}$/;
+        const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+=\[\]{}`|;:‘“<>,.?/]).{8,15}$/;
         // 폼 제출 시 사용자 계정명과 비밀번호의 길이를 다시 확인
         if (username.length < 5 || username.length > 15) {
             userSwal(1, 'modify');

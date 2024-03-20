@@ -59,7 +59,6 @@ export default function Conversion(props: { [x: string]: any }) {
 			const data = await response.json();
 			setCount(data);
 		} catch (error) {
-			console.error('에러 등장 : ', error);
 		}
 	}
 

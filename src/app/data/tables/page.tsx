@@ -84,7 +84,6 @@ export default function DataTables() {
     try {
       await fetchLogic("setting/intervalTime", setIntervalTime);
     } catch (error) {
-      console.log("데이터 가져오기 실패 : ", error);
     }
   }
 

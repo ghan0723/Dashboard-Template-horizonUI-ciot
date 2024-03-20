@@ -125,7 +125,6 @@ export default function Default() {
     try {
       fetchLogic('setting/intervalTime', setIntervalTime);
     } catch (error) {
-      console.log('데이터 가져오기 실패 : ', error);
     }
   };
 
@@ -145,7 +144,6 @@ export default function Default() {
       await fetchLogic("lineCharts?select=" + select + "&username=" + userNameCookie+"&outlookFlag="+((outlookFlag !== undefined && outlookFlag) ? true : false), setLineChartsData);
       await fetchLogic("keyword/all?select=" + select + "&username=" + userNameCookie+"&outlookFlag="+((outlookFlag !== undefined && outlookFlag) ? true : false), setKeywordData);
     } catch (error) {
-      console.log("데이터 가져오기 실패 : ", error);
     }
   };
 

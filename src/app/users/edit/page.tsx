@@ -64,7 +64,6 @@ export default function SignIn() {
             setFreq(result[0].pwd_change_freq);
           })
           .catch((error) => {
-            console.log('error 발생 : ' + error);
           });
       }
     });
@@ -100,7 +99,7 @@ export default function SignIn() {
     event.preventDefault();
     // 폼 제출 시 사용자 계정명과 비밀번호의 길이를 다시 확인
     // const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d])[A-Za-z\d[^A-Za-z\d]]{8,15}$/;
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,15}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+=\[\]{}`|;:‘“<>,.?/]).{8,15}$/;
 
 
     if (username.length < 5 || username.length > 15) {

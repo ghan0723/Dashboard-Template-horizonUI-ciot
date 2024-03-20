@@ -30,7 +30,7 @@ import {
   Textarea,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { backIP } from 'utils/ipDomain';
+import { backIP, frontIP } from 'utils/ipDomain';
 import { useRouter } from 'next/navigation';
 import { MdPlaylistAddCheckCircle } from 'react-icons/md';
 import { getNameCookie } from 'utils/cookie';
@@ -89,8 +89,26 @@ export default function SignIn() {
       setExceptionList(result[0][0]?.clnt_exceptions_list);
       // setKeywordList(result[0][0]?.svr_patterns_list);
       setFlag(result[0][0]?.svr_checkbox_flag);
+      if(result[2][0].privilege === 3){
+        Swal.fire({
+          title: '설정 페이지 오류',
+          html: '<div style="font-size: 14px;">당신은 모니터 계정이라 접속이 불가능합니다.</div>',
+          confirmButtonText: '닫기',
+          confirmButtonColor: 'orange',
+          customClass: {
+            popup: 'custom-popup-class',
+            title: 'custom-title-class',
+            confirmButton: 'custom-confirm-button-class',
+            htmlContainer: 'custom-content-class',
+            container: 'custom-content-class'
+          },
+        }).then((result) => {
+          if (result.isConfirmed || !isOpenAlert) {
+            window.location.href = `${frontIP}/dashboard/default`;
+          }
+        });
+      }
     } catch (error) {
-      console.log("fetch 에러 : " + error);
     }
   }
 
@@ -100,7 +118,6 @@ export default function SignIn() {
       const result = await response.json();
       setProcess(result);
     } catch (error) {
-      console.log("fetch 에러 : " + error);
     }
   }
 
@@ -110,7 +127,6 @@ export default function SignIn() {
       const result = await response.json();
       setDbFilePath(result[0]?.updateFile);
     } catch (error) {
-      console.log("fetch 에러 : " + error);
     }
   }
 

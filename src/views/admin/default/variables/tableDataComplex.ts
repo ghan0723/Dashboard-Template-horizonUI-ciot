@@ -39,7 +39,6 @@ type DataItem = {
 // 	  const dataItem = await response.json();
 // 	  return dataItem;
 // 	} catch (error) {
-// 	  console.error('Error fetching data:', error);
 // 	  return [];
 // 	}
 //   };

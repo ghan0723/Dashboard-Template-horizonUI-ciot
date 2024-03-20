@@ -4,9 +4,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import { redirect, usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { SortingState } from '@tanstack/react-table';
 import { getNameCookie } from 'utils/cookie';
-import { backIP } from 'utils/ipDomain';
+import { backIP, frontIP } from 'utils/ipDomain';
 import { fetchLogic } from 'utils/fetchData';
 import AgentsTable from 'views/admin/dataTables/components/AgentsTable';
+import Swal from 'sweetalert2';
 
 export default function DataTables() {
   const [intervalTime, setIntervalTime] = useState<any>(0);
@@ -23,6 +24,7 @@ export default function DataTables() {
   const searchParams = useSearchParams();
   const pathname = usePathname();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isOpenAlert, setIsOpenAlert] = React.useState(false);
   const [url, setUrl] = useState(searchParams.get('contents') !== null ? searchParams.get('contents') : 'network');
 
   useEffect(() => {
@@ -71,7 +73,6 @@ export default function DataTables() {
     try {
       await fetchLogic("setting/intervalTime", setIntervalTime);
     } catch (error) {
-      console.log("데이터 가져오기 실패 : ", error);
     }
   }
 
@@ -84,12 +85,30 @@ export default function DataTables() {
 
       const response = await fetch(`${backIP}/api/leaked?` + query);
       const data = await response.json();
-      setData(data);
-
-      router.push(`${pathname}?${query}`);
+      if(data[1] === 3){
+        Swal.fire({
+          title: '관리대상목록 페이지 오류',
+          html: '<div style="font-size: 14px;">당신은 모니터 계정이라 접속이 불가능합니다.</div>',
+          confirmButtonText: '닫기',
+          confirmButtonColor: 'orange',
+          customClass: {
+            popup: 'custom-popup-class',
+            title: 'custom-title-class',
+            confirmButton: 'custom-confirm-button-class',
+            htmlContainer: 'custom-content-class',
+            container: 'custom-content-class'
+          },
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = `${frontIP}/dashboard/default`;
+          }
+        });        
+      } else {
+        setData(data[0]);
+        router.push(`${pathname}?${query}`);
+      }
 
     } catch (error) {
-      console.error('Error fetching data:', error);
     }
   };
 

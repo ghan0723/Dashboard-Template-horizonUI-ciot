@@ -43,7 +43,6 @@ export const getNameCookie = async (): Promise<string | null> => {
       return data.username;
     }
   } catch (error) {
-    console.error('Error fetching username:', error);
     return null; // 또는 기본값으로 적절한 값을 반환
   }
 };

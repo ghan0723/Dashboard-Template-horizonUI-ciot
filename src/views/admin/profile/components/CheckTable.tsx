@@ -143,7 +143,6 @@ export default function CheckTable(
       fetchPrivilegeAndData();
       setCheckedRows({});
     } catch (error) {
-      console.error('Error fetching data:', error);
     }
   }
 

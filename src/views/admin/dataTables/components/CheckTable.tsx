@@ -477,7 +477,6 @@ export default function CheckTable(
       setTableData(result);
 
     } catch (error) {
-      console.error("insertData 에러 발생");
     }
   }
 
@@ -498,7 +497,6 @@ export default function CheckTable(
       setTableData(result);
       setCheckedRows({});
     } catch (error) {
-      console.error('Error fetching data:', error);
     }
   };
 
@@ -524,10 +522,8 @@ export default function CheckTable(
         // 브라우저에 생성된 URL 해제
         window.URL.revokeObjectURL(url);
       } else {
-        console.error('Failed to fetch data:', response.status);
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
     }
   }
 
@@ -535,7 +531,6 @@ export default function CheckTable(
   const handleCopyText = (id: string, value: any) => {
     navigator.clipboard.writeText(value[id]).then(() => {
     }).catch(error => {
-      console.error('복사 실패', error);
     });
   }
 

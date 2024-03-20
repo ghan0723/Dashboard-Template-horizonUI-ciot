@@ -32,9 +32,10 @@ import {
 // Custom components
 // Assets
 import { MdOutlineRemoveRedEye, MdPlaylistAddCheckCircle } from 'react-icons/md';
-import { backIP } from 'utils/ipDomain';
+import { backIP, frontIP } from 'utils/ipDomain';
 import { useRouter } from 'next/navigation';
 import { getNameCookie } from 'utils/cookie';
+import Swal from 'sweetalert2';
 
 export default function SignIn() {
   // Chakra color mode
@@ -68,8 +69,27 @@ export default function SignIn() {
       setAuto(result.auto);
       setInterval(result.interval);
       setKeywordList(result.svr_patterns_list);
+      if(result.privilege === 3){
+        Swal.fire({
+          title: '설정 페이지 오류',
+          html: '<div style="font-size: 14px;">당신은 모니터 계정이라 접속이 불가능합니다.</div>',
+          confirmButtonText: '닫기',
+          confirmButtonColor: 'orange',
+          customClass: {
+            popup: 'custom-popup-class',
+            title: 'custom-title-class',
+            confirmButton: 'custom-confirm-button-class',
+            htmlContainer: 'custom-content-class',
+            container: 'custom-content-class'
+          },
+        }).then((result) => {
+          if (result.isConfirmed || !isOpenAlert) {
+            window.location.href = `${frontIP}/dashboard/default`;
+          }
+        });
+      }
     } catch (error) {
-      console.log("fetch 에러 : " + error);
+      
     }
   }
 

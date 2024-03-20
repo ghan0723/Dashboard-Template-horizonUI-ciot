@@ -152,9 +152,6 @@ export default function ScoringTable(props: {
 					cell: (info: any) => {
 						const parts = info.getValue().split(", ");
 
-						console.log('parts',parts);
-						
-
 						return (
 							<Flex color={textColor} fontSize="sm" fontWeight="700"
 							>
@@ -286,10 +283,8 @@ export default function ScoringTable(props: {
 				// 브라우저에 생성된 URL 해제
 				window.URL.revokeObjectURL(url);
 			} else {
-				console.error('Failed to fetch data:', response.status);
 			}
 		} catch (error) {
-			console.error('Error fetching data:', error);
 		}
 	}
 

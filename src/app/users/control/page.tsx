@@ -59,11 +59,8 @@ export default function ProfileOverview() {
           container: 'custom-content-class'
         },
       }).then((result) => {
-        if (result.isConfirmed) {
           window.location.href = `${frontIP}/dashboard/default`;
-        }
       });
-      console.error('Error fetching data:', error);
       setLoading(false); // 에러가 발생하더라도 setLoading(false) 호출
     }
   };
