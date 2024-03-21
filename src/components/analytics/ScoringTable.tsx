@@ -256,7 +256,7 @@ export default function ScoringTable(props: {
 	// 액셀 데이터 저장
 	const handleSaveExcel = async () => {
 		try {
-			const response = await fetch(`${backIP}/excel/analytics?username${userNameCookie}`, {
+			const response = await fetch(`${backIP}/excel/analytics?username=${userNameCookie}`, {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
