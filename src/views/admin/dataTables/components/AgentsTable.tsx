@@ -43,12 +43,10 @@ export default function AgentsTable(
   props: {
     tableData: any; setTableData: any; rows: any; setRows: any; page: any; setPage: any; sorting: any; setSorting: any; search: any;
     searchResult: any; setSearchResult: any; searchComfirm: boolean; setSearchComfirm: any;
-    isOpen: any, onOpen: any, onClose: any
   },
   { children }: { children: React.ReactNode },
 ) {
-  const { tableData, setTableData, rows, setRows, page, setPage, sorting, setSorting, search, searchResult, setSearchResult, searchComfirm, setSearchComfirm,
-    isOpen, onOpen, onClose } = props;
+  const { tableData, setTableData, rows, setRows, page, setPage, sorting, setSorting, search, searchResult, setSearchResult, searchComfirm, setSearchComfirm } = props;
   const [data, setData] = React.useState(() => {
     return tableData !== undefined && tableData;
   });

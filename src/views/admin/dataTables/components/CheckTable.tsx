@@ -109,6 +109,7 @@ export default function CheckTable(
   // useState => ui 화면에서 render가 잘 되게 하기위해 사용
   // search => useRef를 이용하여 변경 값을 바로 적용하게끔 사용
   const [searchValue, setSearchValue] = React.useState(search.current); // 렌더링 될 때 값이 바로 변경할 수 있도록 설정
+  const [totalTableWidth, setTotalTableWidth] = React.useState<any>('98%'); // 초기 테이블 너비를 예시 값으로 설정
 
   function formatDate(date: any): string {
     // date가 문자열인 경우에 대한 보완도 추가
@@ -538,13 +539,28 @@ export default function CheckTable(
 	  const handleColumnResize = (columnId: string, initialPosition: number) => {
       const startDrag = (e: MouseEvent) => {
       const delta = e.clientX - initialPosition;
-      setColumnWidths(prevWidths => ({
-        ...prevWidths,
-        [columnId]: {
-          ...prevWidths[columnId],
-          width : Math.max(prevWidths[columnId].width + delta, 30) // 최소 너비를 50으로 설정
+      setColumnWidths(prevWidths => {        
+        // 새로운 컬럼 너비 계산
+        const newWidth = Math.max(prevWidths[columnId].width + delta, 30); // 최소 너비를 30으로 설정
+        
+        // 테이블 전체 너비 업데이트
+        const additionalWidth = newWidth - prevWidths[columnId].width;
+        setTotalTableWidth((prevWidth:any) => {
+          if(typeof(prevWidth) === 'string') {
+            prevWidth = window.innerWidth * 0.85;
+          }
+          
+          return prevWidth + additionalWidth
+        });
+        
+        return {
+          ...prevWidths,
+          [columnId]: {
+            ...prevWidths[columnId],
+            width : Math.max(prevWidths[columnId].width + delta, 30) // 최소 너비를 50으로 설정
+          }
         }
-      }));
+      });
       initialPosition = e.clientX;
       };
     
@@ -562,7 +578,7 @@ export default function CheckTable(
       onMouseDown: (e: React.MouseEvent) => {
       handleColumnResize(columnId, e.clientX);
       },
-    });
+    });    
 
   // html
   if (data === undefined || data === null || keys.current === undefined) {
@@ -710,14 +726,14 @@ export default function CheckTable(
           justifyContent="center" // 수평 가운데 정렬
         >
           <Box
-            width='100%'
+           width='100%'
           >
             <Table
               variant="simple"
               color="gray.500"
               m={'12px auto 24px'}
               id="checkTable"
-              width='98%'
+              width={typeof(totalTableWidth) === 'string' ? `${totalTableWidth}` : `${totalTableWidth}px`}
               borderTop={'2px solid black'}
             >
               <Thead>
