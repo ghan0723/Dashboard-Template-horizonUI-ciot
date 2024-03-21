@@ -98,7 +98,12 @@ export default function SignIn() {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     // 폼 제출 시 사용자 계정명과 비밀번호의 길이를 다시 확인
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+=\[\]{}`|;:‘“<>,.?/]).{8,15}$/;
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+=\[\]{}`|;:'"<>,.?/]).{8,15}$/;
+
+    console.log('들어옴?');
+    console.log('passwd',passwd);
+    
+    
 
     if (username.length < 5 || username.length > 15) {
       userSwal(1, 'edit');

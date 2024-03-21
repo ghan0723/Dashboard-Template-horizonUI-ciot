@@ -331,7 +331,7 @@ export default function SignIn() {
 
   function validateIPRange(ipRange: string): boolean {
     // 빈 문자열인 경우 유효함
-    if (!ipRange.trim()) {
+    if (ipRange === null || !ipRange.trim()) {
       return true;
     }
 

@@ -36,7 +36,7 @@ export default function Default() {
   const [detail, setDetail] = useState<boolean>(false);
   const [title, setTitle] = useState('7d');
   const [userNameCookie, setUserNameCookie] = useState<string>();
-
+ 
   useEffect(() => {
     fetch(`${backIP}/analysis/keywordList`)
     .then(response => {
