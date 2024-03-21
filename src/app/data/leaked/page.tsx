@@ -23,9 +23,7 @@ export default function DataTables() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const [isOpenAlert, setIsOpenAlert] = React.useState(false);
-  const [url, setUrl] = useState(searchParams.get('contents') !== null ? searchParams.get('contents') : 'network');
+  const chkIntervalId:any = useRef();
 
   useEffect(() => {
     fetchIntervalTime();
@@ -33,28 +31,24 @@ export default function DataTables() {
   }, []);
 
   useEffect(() => {
+    console.log('userNameCookie======================',userNameCookie);
+    
     fetchData();
   }, [userNameCookie]);
 
   useEffect(() => {
-    if (!isOpen) {
-      const timerId = setTimeout(() => {
-        fetchData();
-      }, 300);
-
-      return () => {
-        clearTimeout(timerId);
-      }
-    }
-  }, [isOpen]);
-
-  useEffect(() => {
-    if (intervalTime !== undefined && intervalTime !== null && intervalTime !== 0) {
+    console.log('나머지');
+    if (intervalTime !== undefined && intervalTime !== null && intervalTime !== 0 && userNameCookie !== undefined && userNameCookie !== null) {
       const timer: number = +intervalTime[0]?.svr_ui_refresh_interval * 1000;
       fetchData();
       const intervalId = setInterval(() => {
         fetchData();
       }, timer);
+
+      console.log('intervalId',intervalId);
+      chkIntervalId.current = intervalId;
+      
+      
 
       return () => {
         clearInterval(intervalId);
@@ -65,6 +59,9 @@ export default function DataTables() {
 
   const fetchLog = async () => {
     const cookieValue = await getNameCookie();
+
+    console.log('cookieValue',cookieValue);
+    
     setUserNameCookie(cookieValue);
     fetchLogic(`log/leaked?username=${cookieValue}`);
   }
@@ -85,7 +82,10 @@ export default function DataTables() {
 
       const response = await fetch(`${backIP}/api/leaked?` + query);
       const data = await response.json();
-      if(data[1] === 3){
+      
+      if(data[1] === 3){        
+        clearInterval(chkIntervalId.current);
+
         Swal.fire({
           title: '관리대상목록 페이지 오류',
           html: '<div style="font-size: 14px;">당신은 모니터 계정이라 접속이 불가능합니다.</div>',
@@ -98,11 +98,11 @@ export default function DataTables() {
             htmlContainer: 'custom-content-class',
             container: 'custom-content-class'
           },
-        }).then((result) => {
-          if (result.isConfirmed) {
+        }).then(result => {
+          if (result.isConfirmed || (result.isDismissed === true && result.dismiss === Swal.DismissReason.backdrop)) {
             window.location.href = `${frontIP}/dashboard/default`;
           }
-        });        
+        });
       } else {
         setData(data[0]);
         router.push(`${pathname}?${query}`);
@@ -149,7 +149,6 @@ export default function DataTables() {
         search={search}
         searchResult={searchResult} setSearchResult={setSearchResult}
         searchComfirm={searchComfirm} setSearchComfirm={setSearchComfirm}
-        isOpen={isOpen} onOpen={onOpen} onClose={onClose}
       />
     </Box>
   );

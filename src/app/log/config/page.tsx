@@ -61,6 +61,8 @@ export default function SignIn() {
                           container: 'custom-content-class'
                         },
                       }).then(() => {
+                        console.log("?????????");
+                        
                           window.location.href = `${frontIP}/dashboard/default`;
                       });
                 }
