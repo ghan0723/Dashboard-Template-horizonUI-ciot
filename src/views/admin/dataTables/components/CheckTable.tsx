@@ -200,23 +200,20 @@ export default function CheckTable(
             return <></>;
           },
           cell: (info: any) => {
-            const infoStr = info.column.id === 'Accurancy' && tableData[0][0].id !== '';
-            
             return (
-              info.column.id.toLowerCase() === 'screenshot' && tableData[0]?.ScreenShot !== '' ?
+              info.column.id.toLowerCase() === 'screenshot' && info.getValue() !== '' ?
                 <IconButton
                   aria-label="Screenshots"
-                  icon={(info.getValue() !== undefined && info.getValue() !== null && info.getValue() !== '') ? <FaCamera></FaCamera> : <></>}
-                  id={info.getValue()}
+                  icon={(info.getValue() !== undefined && info.getValue() !== null && info.getValue() !== '3') ? <FaCamera></FaCamera> : <IoMdRefresh></IoMdRefresh>}
+                  id={currentId}
                   name={info.getValue()}
                   width='0px' height='0px'
-                  onClick={handleShowScreenShots}
+                  onClick={(e) => handleShowScreenShots(e,info.getValue())}
                 /> :
-                ((info.column.id.toLowerCase() === 'download' && tableData[0]?.DownLoad !== '') ||
-                (info.column.id.toLowerCase() === 'downloading' && tableData[0]?.Downloading !== '')) ? 
+                ((info.column.id.toLowerCase() === 'download' || info.column.id.toLowerCase() === 'downloading') && info.getValue() !== '') ? 
                   <IconButton
                     aria-label="Downloading"
-                    icon={(info.getValue() !== undefined && info.getValue() !== null && info.getValue() !== '') ? <IoMdDownload></IoMdDownload> : <IoMdRefresh></IoMdRefresh>}
+                    icon={(info.getValue() !== undefined && info.getValue() !== null && info.getValue() !== '3') ? <IoMdDownload></IoMdDownload> : <IoMdRefresh></IoMdRefresh>}
                     id={currentId}
                     name={info.getValue()}
                     width='0px' height='0px'
@@ -410,19 +407,25 @@ export default function CheckTable(
   };
 
   // Screenshots 클릭시
-  const handleShowScreenShots = (e: React.MouseEvent<HTMLButtonElement>) => {
-    const screenshotId = e.currentTarget.name;
-    setSelectedScreenshot(screenshotId);
-    onOpen();
-    // Regular expression to match the date pattern
-    const dateRegex = /\b(\d{4}-\d{2}-\d{2})/;
-    // Extract the date using the regular expression
-    const match = screenshotId.match(dateRegex);
+  const handleShowScreenShots = (e: React.MouseEvent<HTMLButtonElement>, value:any) => {
+    const screenshotName = e.currentTarget.name;
+    const screenshotId   = e.currentTarget.id;
 
-    // Check if a match is found and get the date
-    const extractedDate = match ? match[1] : null;
-
-    setScreenshotDate(extractedDate);
+    if(value === '3') {
+      fetch(`${backIP}/api/refresh?contents=` + name + `&id=` + screenshotId + '&name=screenshot');
+    } else {
+      setSelectedScreenshot(screenshotName);
+      onOpen();
+      // Regular expression to match the date pattern
+      const dateRegex = /\b(\d{4}-\d{2}-\d{2})/;
+      // Extract the date using the regular expression
+      const match = screenshotName.match(dateRegex);
+  
+      // Check if a match is found and get the date
+      const extractedDate = match ? match[1] : null;
+  
+      setScreenshotDate(extractedDate);
+    }
   };
 
   //다운로드 아이콘 클릭시
@@ -430,13 +433,8 @@ export default function CheckTable(
     const downloadName = e.currentTarget.name;
     const downLoadId = e.currentTarget.id;
 
-    console.log('downLoad',downloadName);
-    console.log('downLoadId',downLoadId);
-    
-    console.log('value',value);
-
-    if(value === undefined) {
-      fetch(`${backIP}/api/refresh?contents=` + name + `&id=` + downLoadId);
+    if(value === '3') {
+      fetch(`${backIP}/api/refresh?contents=` + name + `&id=` + downLoadId + '&name=upload');
     } else {
       setSelectedDownload(downloadName);
       // Regular expression to match the date pattern
