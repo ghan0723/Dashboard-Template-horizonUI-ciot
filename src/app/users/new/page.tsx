@@ -99,7 +99,6 @@ export default function SignIn() {
         let   checkFlag:boolean = true;
         const cidrRegex = /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/;
         const ipRangeRegex = /^(\d{1,3}\.){3}\d{1,3}-(\d{1,3}\.){3}\d{1,3}$/;
-
         // 사용자 입력을 줄바꿈 또는 쉼표를 기준으로 자릅니다.
         const inputs: string[] = ipRange.trim().split(/[\r\n,]+\s*/);
         //현재 로그인 한 아이디의 IP 대역을 계산한다.
@@ -118,12 +117,10 @@ export default function SignIn() {
                         const cookieIpAddresses: string[] = cookieIP.split("-");
                         const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
                         const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
-
                         // IP 주소의 각 자리수를 확인하고 유효한지 검사합니다.
                         function isValidIPAddress(ip: string[]): boolean {
                             return ip.every(part => /^\d+$/.test(part) && parseInt(part, 10) >= 0 && parseInt(part, 10) <= 255);
                         }
-
                         // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
                         if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
                             checkFlag = false;
