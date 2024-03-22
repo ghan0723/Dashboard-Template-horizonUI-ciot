@@ -31,13 +31,10 @@ export default function DataTables() {
   }, []);
 
   useEffect(() => {
-    console.log('userNameCookie======================',userNameCookie);
-    
     fetchData();
   }, [userNameCookie]);
 
   useEffect(() => {
-    console.log('나머지');
     if (intervalTime !== undefined && intervalTime !== null && intervalTime !== 0 && userNameCookie !== undefined && userNameCookie !== null) {
       const timer: number = +intervalTime[0]?.svr_ui_refresh_interval * 1000;
       fetchData();
@@ -45,7 +42,6 @@ export default function DataTables() {
         fetchData();
       }, timer);
 
-      console.log('intervalId',intervalId);
       chkIntervalId.current = intervalId;
       
       
@@ -59,8 +55,6 @@ export default function DataTables() {
 
   const fetchLog = async () => {
     const cookieValue = await getNameCookie();
-
-    console.log('cookieValue',cookieValue);
     
     setUserNameCookie(cookieValue);
     fetchLogic(`log/leaked?username=${cookieValue}`);

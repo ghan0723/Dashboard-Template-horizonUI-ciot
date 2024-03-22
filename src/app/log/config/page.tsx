@@ -60,9 +60,7 @@ export default function SignIn() {
                           htmlContainer: 'custom-content-class',
                           container: 'custom-content-class'
                         },
-                      }).then(() => {
-                        console.log("?????????");
-                        
+                      }).then(() => {                        
                           window.location.href = `${frontIP}/dashboard/default`;
                       });
                 }
