@@ -158,53 +158,104 @@ export default function SignIn() {
         for (const input of inputs) {
             for (const cookieIP of cookieIPs) {
                 if (ipRangeRegex.test(input)) {
-                    // IP 대역을 "-"로 분할하여 시작과 끝 IP 주소를 추출합니다.
-                    // 쿠키의 대역도 똑같이 한다.
+                    // 입력값이 ip 일때
                     const ipAddresses: string[] = input.split("-");
                     const startIP: string[] = ipAddresses[0].trim().split(".");
                     const endIP: string[] = ipAddresses[1].trim().split(".");
+                    if(ipRangeRegex.test(cookieIP)){
+                        //쿠키가 ip 일때
+                        const cookieIpAddresses: string[] = cookieIP.split("-");
+                        const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
+                        const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
 
-                    const cookieIpAddresses: string[] = cookieIP.split("-");
-                    const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
-                    const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
+                        // IP 주소의 각 자리수를 확인하고 유효한지 검사합니다.
+                        function isValidIPAddress(ip: string[]): boolean {
+                            return ip.every(part => /^\d+$/.test(part) && parseInt(part, 10) >= 0 && parseInt(part, 10) <= 255);
+                        }
 
-                    // IP 주소의 각 자리수를 확인하고 유효한지 검사합니다.
-                    function isValidIPAddress(ip: string[]): boolean {
-                        return ip.every(part => /^\d+$/.test(part) && parseInt(part, 10) >= 0 && parseInt(part, 10) <= 255);
-                    }
-
-                    // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
-                    if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
-                        return false;
-                    }
-
-                    // 시작 IP 주소가 끝 IP 주소보다 작은지 확인합니다.
-                    for (let i = 0; i < 4; i++) {
-                        if ((parseInt(startIP[i], 10) < parseInt(cookieStartIP[i], 10)) || (parseInt(endIP[i], 10) > parseInt(cookieEndIP[i], 10))) {
+                        // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
+                        if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
                             return false;
+                        }
+
+                        // 시작 IP 주소가 끝 IP 주소보다 작은지 확인합니다.
+                        for (let i = 0; i < 4; i++) {
+                            if ((parseInt(startIP[i], 10) < parseInt(cookieStartIP[i], 10)) || (parseInt(endIP[i], 10) > parseInt(cookieEndIP[i], 10))) {
+                                return false;
+                            }
+                        }
+                    } else if (cidrRegex.test(cookieIP)){
+                        //쿠키가 cidr일때
+                        const [ip, cidr] = cookieIP.split("/");
+                        const parts = ip.split(".").map(part => parseInt(part, 10));
+                        const cidrBits = parseInt(cidr, 10);
+                        const cidrMask = (0xffffffff << (32 - cidrBits)) >>> 0;
+                        const startIpParts = parts.map((part, index) => part & ((cidrMask >> (24 - 8 * index)) & 0xff));
+                        const endIpParts = parts.map((part, index) => part | ((~cidrMask >> (24 - 8 * index)) & 0xff));
+
+                        // IP 주소의 각 자리수를 확인하고 유효한지 검사합니다.
+                        function isValidIPAddress(ip: string[]): boolean {
+                            return ip.every(part => /^\d+$/.test(part) && parseInt(part, 10) >= 0 && parseInt(part, 10) <= 255);
+                        }
+
+                        // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
+                        if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
+                            return false;
+                        }
+
+                        // 시작 IP 주소가 끝 IP 주소보다 작은지 확인합니다.
+                        for (let i = 0; i < 4; i++) {
+                            if ((parseInt(startIP[i], 10) < startIpParts[i]) || (parseInt(endIP[i], 10) > endIpParts[i])) {
+                                return false;
+                            }
                         }
                     }
                 } else if (cidrRegex.test(input)) {
+                    //입력값이 cidr일때
                     const [ip, cidr] = input.split("/");
                     const parts = ip.split(".").map(part => parseInt(part, 10));
                     const cidrBits = parseInt(cidr, 10);
                     const cidrMask = (0xffffffff << (32 - cidrBits)) >>> 0;
                     const startIpParts = parts.map((part, index) => part & ((cidrMask >> (24 - 8 * index)) & 0xff));
                     const endIpParts = parts.map((part, index) => part | ((~cidrMask >> (24 - 8 * index)) & 0xff));
-                    const cookieIpAddresses: string[] = cookieIP.split("-");
-                    const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
-                    const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
-                    if (parts.some(part => isNaN(part) || part < 0 || part > 255)) {
-                        return false; // IP 주소의 각 자리수가 0에서 255 사이의 값을 가져야 합니다.
-                    } 
-                    const cidrValue = parseInt(cidr, 10);
-                    if (isNaN(cidrValue) || cidrValue < 0 || cidrValue > 32 ) {
-                    // || cidrValue % 8 !== 0) {
-                        return false; // CIDR 접두사는 0에서 32 사이의 값을 가져야 하며, 8의 배수여야 합니다.
-                    }
-                    for(let i = 0; i< parts.length; i++){
-                        if(startIpParts[i] < parseInt(cookieStartIP[i], 10) || endIpParts[i] > parseInt(cookieEndIP[i], 10)){
-                           return false;
+                    if(cidrRegex.test(cookieIP)){
+                        //쿠키도 cidr일때
+                        const [cookieip, cookieCidr] = cookieIP.split("/");
+                        const cookieParts = cookieip.split(".").map(part => parseInt(part, 10));
+                        const cookieCidrBits = parseInt(cookieCidr, 10);
+                        const cookieCidrMask = (0xffffffff << (32 - cookieCidrBits)) >>> 0;
+                        const cookieStartIP = cookieParts.map((part, index) => part & ((cookieCidrMask >> (24 - 8 * index)) & 0xff));
+                        const cookieEndIP = cookieParts.map((part, index) => part | ((~cookieCidrMask >> (24 - 8 * index)) & 0xff));
+                        if (parts.some(part => isNaN(part) || part < 0 || part > 255)) {
+                            return false; // IP 주소의 각 자리수가 0에서 255 사이의 값을 가져야 합니다.
+                        } 
+                        const cidrValue = parseInt(cidr, 10);
+                        if (isNaN(cidrValue) || cidrValue < 0 || cidrValue > 32 ) {
+                        // || cidrValue % 8 !== 0) {
+                            return false; // CIDR 접두사는 0에서 32 사이의 값을 가져야 하며, 8의 배수여야 합니다.
+                        }
+                        for(let i = 0; i< parts.length; i++){
+                            if(startIpParts[i] < cookieStartIP[i] || endIpParts[i] > cookieEndIP[i]){
+                               return false;
+                            }
+                        }
+                    } else if (ipRangeRegex.test(cookieIP)){
+                        //쿠키가 그냥ip일때
+                        const cookieIpAddresses: string[] = cookieIP.split("-");
+                        const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
+                        const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
+                        if (parts.some(part => isNaN(part) || part < 0 || part > 255)) {
+                            return false; // IP 주소의 각 자리수가 0에서 255 사이의 값을 가져야 합니다.
+                        } 
+                        const cidrValue = parseInt(cidr, 10);
+                        if (isNaN(cidrValue) || cidrValue < 0 || cidrValue > 32 ) {
+                        // || cidrValue % 8 !== 0) {
+                            return false; // CIDR 접두사는 0에서 32 사이의 값을 가져야 하며, 8의 배수여야 합니다.
+                        }
+                        for(let i = 0; i< parts.length; i++){
+                            if(startIpParts[i] < parseInt(cookieStartIP[i], 10) || endIpParts[i] > parseInt(cookieEndIP[i], 10)){
+                               return false;
+                            }
                         }
                     }
                 } else {
