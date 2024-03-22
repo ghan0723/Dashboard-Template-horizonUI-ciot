@@ -430,11 +430,6 @@ export default function CheckTable(
     const downloadName = e.currentTarget.name;
     const downLoadId = e.currentTarget.id;
 
-    console.log('downLoad',downloadName);
-    console.log('downLoadId',downLoadId);
-    
-    console.log('value',value);
-
     if(value === undefined) {
       fetch(`${backIP}/api/refresh?contents=` + name + `&id=` + downLoadId);
     } else {
