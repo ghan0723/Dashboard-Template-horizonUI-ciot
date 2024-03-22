@@ -56,13 +56,14 @@ import {
 import Card from 'components/card/Card';
 import { Paginate } from 'react-paginate-chakra-ui';
 import { DeleteIcon, EditIcon, SearchIcon } from '@chakra-ui/icons';
-import { FaCamera, FaSave, FaSortDown, FaSortUp } from 'react-icons/fa';
+import { FaCamera, FaSave, FaSortDown, FaSortUp, FaSync } from 'react-icons/fa';
 import { getNameCookie } from 'utils/cookie';
 import { backIP, frontIP } from 'utils/ipDomain';
 import { RiFileExcel2Fill, RiScreenshot2Fill } from 'react-icons/ri';
-import { IoMdDownload } from 'react-icons/io';
+import { IoMdDownload, IoMdRefresh } from 'react-icons/io';
 import { MdOutlineWarning } from 'react-icons/md';
 import { mediaAlias, networkAlias, outlookAlias, printAlias } from 'utils/alias';
+import { IoReload } from 'react-icons/io5';
 
 const columnHelper = createColumnHelper();
 
@@ -137,11 +138,10 @@ export default function CheckTable(
     return formattedDate;
   }
 
-  const tableWidths = `header.id === 'Time' ? '8%' : header.id === 'Accurancy' ? '5%' : 'auto'`;
-
   let i: number;
   let str: string = '';
   let columns = [];
+  let currentId:any;
 
   // TanStack Table
   // columns table Create
@@ -151,8 +151,6 @@ export default function CheckTable(
     if (keys.current.length === undefined) break;
     if (i >= keys.current.length) break;
     str = keys.current.at(i);
-    let headerStr = str.length >= 5 ? str.slice(0, 3) + '...' : str;
-
 
     // CheckBox
     if (i === 0) {
@@ -170,6 +168,7 @@ export default function CheckTable(
             </Text>
           ),
           cell: (info: any) => {
+            currentId = info.getValue();
             return (
               <Flex align="center" justifyContent="center">
                 {tableData[0][0].id !== '' ? (
@@ -202,6 +201,7 @@ export default function CheckTable(
           },
           cell: (info: any) => {
             const infoStr = info.column.id === 'Accurancy' && tableData[0][0].id !== '';
+            
             return (
               info.column.id.toLowerCase() === 'screenshot' && tableData[0]?.ScreenShot !== '' ?
                 <IconButton
@@ -213,15 +213,15 @@ export default function CheckTable(
                   onClick={handleShowScreenShots}
                 /> :
                 ((info.column.id.toLowerCase() === 'download' && tableData[0]?.DownLoad !== '') ||
-                  (info.column.id.toLowerCase() === 'downloading' && tableData[0]?.Downloading !== '')) ?
-                    <IconButton
-                      aria-label="Downloading"
-                      icon={(info.getValue() !== undefined && info.getValue() !== null && info.getValue() !== '') ? <IoMdDownload></IoMdDownload> : <></>}
-                      id={info.getValue()}
-                      name={info.getValue()}
-                      width='0px' height='0px'
-                      onClick={handleDownload}
-                    />
+                (info.column.id.toLowerCase() === 'downloading' && tableData[0]?.Downloading !== '')) ? 
+                  <IconButton
+                    aria-label="Downloading"
+                    icon={(info.getValue() !== undefined && info.getValue() !== null && info.getValue() !== '') ? <IoMdDownload></IoMdDownload> : <IoMdRefresh></IoMdRefresh>}
+                    id={currentId}
+                    name={info.getValue()}
+                    width='0px' height='0px'
+                    onClick={(e) => handleDownload(e,info.getValue())}
+                  /> 
                   :
                   <Tooltip label={info.getValue() !== undefined && info.getValue() !== null &&
                     (info.column.id === 'Accurancy' && tableData[0][0].id !== ''
@@ -426,26 +426,37 @@ export default function CheckTable(
   };
 
   //다운로드 아이콘 클릭시
-  const handleDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    const downloadId = e.currentTarget.name;
-    setSelectedDownload(downloadId);
-    // Regular expression to match the date pattern
-    const dateRegex = /\b(\d{4}-\d{2}-\d{2})/;
-    // Extract the date using the regular expression
-    const match = downloadId.match(dateRegex);
-    // Check if a match is found and get the date
-    const extractedDate = match ? match[1] : null;
-    const downloadPath = `${backIP}/Detects/${extractedDate}/${downloadId}`;
-    // '^^' 기호를 기준으로 문자열을 분리합니다.
-    const parts = downloadPath.split('^^');
-    const fileName = parts[parts.length - 1];
-    const anchor = document.createElement('a');
-    anchor.href = await toDataURL(downloadPath);
-    anchor.download = fileName;
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    fetchDownload(fileName);
+  const handleDownload = async (e: React.MouseEvent<HTMLButtonElement>, value:any) => {
+    const downloadName = e.currentTarget.name;
+    const downLoadId = e.currentTarget.id;
+
+    console.log('downLoad',downloadName);
+    console.log('downLoadId',downLoadId);
+    
+    console.log('value',value);
+
+    if(value === undefined) {
+      fetch(`${backIP}/api/refresh?contents=` + name + `&id=` + downLoadId);
+    } else {
+      setSelectedDownload(downloadName);
+      // Regular expression to match the date pattern
+      const dateRegex = /\b(\d{4}-\d{2}-\d{2})/;
+      // Extract the date using the regular expression
+      const match = downloadName.match(dateRegex);
+      // Check if a match is found and get the date
+      const extractedDate = match ? match[1] : null;
+      const downloadPath = `${backIP}/Detects/${extractedDate}/${downloadName}`;
+      // '^^' 기호를 기준으로 문자열을 분리합니다.
+      const parts = downloadPath.split('^^');
+      const fileName = parts[parts.length - 1];
+      const anchor = document.createElement('a');
+      anchor.href = await toDataURL(downloadPath);
+      anchor.download = fileName;
+      document.body.appendChild(anchor);
+      anchor.click();
+      document.body.removeChild(anchor);
+      fetchDownload(fileName);
+    }
   }
   async function toDataURL(url: any) {
     const blob = await fetch(url).then(res => res.blob());
