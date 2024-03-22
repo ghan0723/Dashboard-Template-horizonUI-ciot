@@ -136,19 +136,26 @@ export default function SignIn() {
                 } else if (cidrRegex.test(input)) {
                     const [ip, cidr] = input.split("/");
                     const parts = ip.split(".").map(part => parseInt(part, 10));
+                    const cidrBits = parseInt(cidr, 10);
+                    const cidrMask = (0xffffffff << (32 - cidrBits)) >>> 0;
+                    const startIpParts = parts.map((part, index) => part & ((cidrMask >> (24 - 8 * index)) & 0xff));
+                    const endIpParts = parts.map((part, index) => part | ((~cidrMask >> (24 - 8 * index)) & 0xff));
+                    const cookieIpAddresses: string[] = cookieIP.split("-");
+                    const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
+                    const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
                     if (parts.some(part => isNaN(part) || part < 0 || part > 255)) {
                         return false; // IP 주소의 각 자리수가 0에서 255 사이의 값을 가져야 합니다.
                     } 
-
                     const cidrValue = parseInt(cidr, 10);
-                    if (isNaN(cidrValue) || cidrValue <= 0 || cidrValue >= 32 || cidrValue % 8 !== 0) {
+                    if (isNaN(cidrValue) || cidrValue < 0 || cidrValue > 32 ) {
+                    // || cidrValue % 8 !== 0) {
                         return false; // CIDR 접두사는 0에서 32 사이의 값을 가져야 하며, 8의 배수여야 합니다.
                     }
-                    // for(let i = 0; i< parts.length; i++){
-                    //     if(parts){
-                            
-                    //     }
-                    // }
+                    for(let i = 0; i< parts.length; i++){
+                        if(startIpParts[i] < parseInt(cookieStartIP[i], 10) || endIpParts[i] > parseInt(cookieEndIP[i], 10)){
+                           return false;
+                        }
+                    }
                 } else {
                     return false;
                 }
