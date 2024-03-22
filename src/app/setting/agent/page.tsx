@@ -147,7 +147,6 @@ export default function SignIn() {
   }
 
   const handleExceptionListChange = (e: any) => {
-    console.log("exc : ", e.target.value);
     setExceptionList(e.target.value);
   };
 
