@@ -26,7 +26,7 @@ export default function DataTables() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [url, setUrl] = useState(searchParams.get('contents') !== null ? searchParams.get('contents') : 'network');
   const [outlookFlag, setOutlookFlag] = useState();
-  const [userNameCookie, setUserNameCookie] = useState<string>();
+  const userNameCookie = useRef<string>();
 
   useEffect(() => {
     fetchOutlookFlag();
@@ -55,7 +55,7 @@ export default function DataTables() {
 
   useEffect(() => {
 
-    if (intervalTime !== undefined && intervalTime !== null && intervalTime !== 0) {
+    if (intervalTime !== undefined && intervalTime !== null && intervalTime !== 0 && userNameCookie.current !== undefined) {
       const timer: number = +intervalTime[0]?.svr_ui_refresh_interval * 1000;
 
       fetchData();
@@ -72,12 +72,12 @@ export default function DataTables() {
 
   const fetchLog = async () => {
     const cookieValue = await getNameCookie();
-    setUserNameCookie(cookieValue);
+    userNameCookie.current = cookieValue;
     fetchLogic(`log/tables?username=${cookieValue}`);
   }
 
   const fetchOutlookFlag = async () => {
-    await fetchLogic(`setting/outlook?username=${userNameCookie}`, setOutlookFlag);
+    await fetchLogic(`setting/outlook?username=${userNameCookie.current}`, setOutlookFlag);
   }
 
   const fetchIntervalTime = async () => {
@@ -91,7 +91,7 @@ export default function DataTables() {
     try {
       const query = 'contents=' + url + '&page=' + page + '&pageSize=' + rows +
         '&sorting=' + (sorting[0]?.id ?? '') + '&desc=' + (sorting[0]?.desc ?? '') +
-        '&category=' + search.current + '&search=' + searchResult + '&username=' + userNameCookie;
+        '&category=' + search.current + '&search=' + searchResult + '&username=' + userNameCookie.current;
 
       const response = await fetch(`${backIP}/api?` + query);
       const data = await response.json();
@@ -109,7 +109,7 @@ export default function DataTables() {
 
   const fetchScreenshot = async (fileName: any) => {
     try {
-      const response = await fetchLogic(`log/screenshot?username=${userNameCookie}&fileName=${fileName}`);
+      const response = await fetchLogic(`log/screenshot?username=${userNameCookie.current}&fileName=${fileName}`);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
@@ -117,7 +117,7 @@ export default function DataTables() {
 
   const fetchDownload = async (fileName: any) => {
     try {
-      const response = await fetchLogic(`log/download?username=${userNameCookie}&fileName=${fileName}`);
+      const response = await fetchLogic(`log/download?username=${userNameCookie.current}&fileName=${fileName}`);
     } catch (error) {
       console.error('Error fetching data:', error);
     }

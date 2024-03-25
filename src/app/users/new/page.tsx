@@ -96,7 +96,7 @@ export default function SignIn() {
     };
 
     function validateIPRange(ipRange: string): boolean {
-        let   checkFlag:boolean = true;
+        let   checkFlag:boolean;
         const cidrRegex = /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/;
         const ipRangeRegex = /^(\d{1,3}\.){3}\d{1,3}-(\d{1,3}\.){3}\d{1,3}$/;
         // 사용자 입력을 줄바꿈 또는 쉼표를 기준으로 자릅니다.
@@ -107,7 +107,12 @@ export default function SignIn() {
         // 각 입력에 대해 형식을 검사합니다.
         for (const input of inputs) {
             for (const cookieIP of cookieIPs) {
+                // index = 0;
+                // checkFlag = [];
+                checkFlag = true;
                 if (ipRangeRegex.test(input)) {
+                    // checkFlag.push(true);
+                    
                     // 입력값이 ip 일때
                     const ipAddresses: string[] = input.split("-");
                     const startIP: string[] = ipAddresses[0].trim().split(".");
@@ -160,7 +165,7 @@ export default function SignIn() {
                                 if(!checkFlag) break;
                             }
                         }
-                    }
+                    }                    
 
                     if(checkFlag) break;
                 } else if (cidrRegex.test(input)) {
