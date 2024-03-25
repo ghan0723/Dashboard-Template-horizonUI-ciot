@@ -762,8 +762,8 @@ export default function CheckTable(
                           cursor="pointer"
                           whiteSpace="nowrap"
                           pt='5px' pb='5px'
-                          pl={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port') ? '10px' : '0px'}
-                          pr={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port') ? '10px' : '7px'}
+                          pl={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '0px'}
+                          pr={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '7px'}
                           // width={header.id === 'id' ? '3%' : header.getSize()}
                           // minW={header.id === 'id' ? '3%' : '50px'}
                           width={columnWidths[header.id]?.width}

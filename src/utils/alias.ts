@@ -26,65 +26,69 @@ export const networkAlias: any = {
       align : 'start',
       width : 100,
     },
+    protocol: {
+      name : "프로토콜", // 5 
+      align : 'center',
+      width : 50,
+    },
     SrcIp: {
-      name : "출발지 Ip", // 5
+      name : "출발지 Ip", // 6
       align : 'start',
       width : 100,
     },
     SrcPort: {
-      name : "출발지 Port", // 6
+      name : "출발지 Port", // 7
       align : 'center',
       width : 50,
     },
     DstIp: {
-      name : "목적지 Ip", // 7
+      name : "목적지 Ip", // 8
       align : 'start',
       width : 50,
     },
     DstPort: {
-      name : "목적지 Port", // 8
+      name : "목적지 Port", // 9
       align : 'center',
       width : 100,
     },
     Process: {
-      name : "프로세스명", // 9
+      name : "프로세스명", // 10
       align : 'start',
       width : 200,
     },
     PIDs: {
-      name : "PID", // 10
+      name : "PID", // 11
       align : 'center',
       width : 50,
     },
     SrcFile: {
-      name : "유출 파일명", // 11
+      name : "유출 파일명", // 12
       align : 'start',
       width : 350,
     },
-    DownLoad: {
-      name : "파일다운로드", // 12
-      align : 'center',
-      width : 50,
-    },
-    ScreenShot: {
-      name : "스크린샷", // 13
-      align : 'center',
-      width : 50,
-    },
     FileSizes: {
-      name : "파일 크기", // 14
+      name : "파일 크기", // 13
       align : 'right',
       width : 100,
     },
     Keywords: {
-      name : "탐지패턴", // 15
+      name : "탐지패턴", // 14
       align : 'start',
       width : 200,
     },
     DestFiles: {
-      name : "URL", // 16
+      name : "URL", // 15
       align : 'start',
       width : 350,
+    },    DownLoad: {
+      name : "파일다운로드", // 16
+      align : 'center',
+      width : 50,
+    },
+    ScreenShot: {
+      name : "스크린샷", // 17
+      align : 'center',
+      width : 50,
     },
   };
 
