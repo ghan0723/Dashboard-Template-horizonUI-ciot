@@ -36,6 +36,7 @@ import { MdPlaylistAddCheckCircle } from 'react-icons/md';
 import { getNameCookie } from 'utils/cookie';
 import { DeleteIcon, Icon } from '@chakra-ui/icons';
 import Swal from 'sweetalert2';
+import { isValidIPAddress } from 'utils/valid';
 
 export default function SignIn() {
   // Chakra color mode
@@ -353,11 +354,6 @@ export default function SignIn() {
             const ipAddresses: string[] = input.split("-");
             const startIP: string[] = ipAddresses[0].trim().split(".");
             const endIP: string[] = ipAddresses[1].trim().split(".");
-            
-            // IP 주소의 각 자리수를 확인하고 유효한지 검사합니다.
-            function isValidIPAddress(ip: string[]): boolean {
-                return ip.every(part => /^\d+$/.test(part) && parseInt(part, 10) >= 0 && parseInt(part, 10) <= 255);
-            }
         
             // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
             if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
@@ -371,13 +367,17 @@ export default function SignIn() {
                 }
             }
         } else if (cidrRegex.test(input)){
-            const [ip, cidr] = input.split("/");
-            const parts = ip.split(".").map(part => parseInt(part, 10));
+          const [ip, cidr] = input.split("/");
+          const parts = ip.split(".").map(part => parseInt(part, 10));
+          const cidrBits = parseInt(cidr, 10);
+          const cidrMask = (0xffffffff << (32 - cidrBits)) >>> 0;
+          const startIpParts = parts.map((part, index) => part & ((cidrMask >> (24 - 8 * index)) & 0xff));
+          const endIpParts = parts.map((part, index) => part | ((~cidrMask >> (24 - 8 * index)) & 0xff));
             if (parts.some(part => isNaN(part) || part < 0 || part > 255)) {
                 return false; // IP 주소의 각 자리수가 0에서 255 사이의 값을 가져야 합니다.
             }
             const cidrValue = parseInt(cidr, 10);
-            if (isNaN(cidrValue) || cidrValue <= 0 || cidrValue >= 32 || cidrValue % 8 !== 0) {
+            if (isNaN(cidrValue) || cidrValue < 0 || cidrValue > 32 ) {
                 return false; // CIDR 접두사는 0에서 32 사이의 값을 가져야 하며, 8의 배수여야 합니다.
             }
         } else {

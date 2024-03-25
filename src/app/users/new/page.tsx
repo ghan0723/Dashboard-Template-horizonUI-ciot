@@ -30,6 +30,7 @@ import { useRouter } from 'next/navigation';
 import { backIP } from 'utils/ipDomain';
 import { userSwal } from 'components/swal/customSwal';
 import Swal from 'sweetalert2';
+import { compareRange, isValidIPAddress } from 'utils/valid';
 
 export default function SignIn() {
     // Chakra color mode
@@ -107,6 +108,7 @@ export default function SignIn() {
         // 각 입력에 대해 형식을 검사합니다.
         for (const input of inputs) {
             for (const cookieIP of cookieIPs) {
+                checkFlag=true;
                 if (ipRangeRegex.test(input)) {
                     // 입력값이 ip 일때
                     const ipAddresses: string[] = input.split("-");
@@ -117,19 +119,14 @@ export default function SignIn() {
                         const cookieIpAddresses: string[] = cookieIP.split("-");
                         const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
                         const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
-                        // IP 주소의 각 자리수를 확인하고 유효한지 검사합니다.
-                        function isValidIPAddress(ip: string[]): boolean {
-                            return ip.every(part => /^\d+$/.test(part) && parseInt(part, 10) >= 0 && parseInt(part, 10) <= 255);
-                        }
+
                         // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
                         if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
                             checkFlag = false;
                         }
-                        
-
                         // 시작 IP 주소가 끝 IP 주소보다 작은지 확인합니다.
                         for (let i = 0; i < 4; i++) {
-                            if ((parseInt(startIP[i], 10) < parseInt(cookieStartIP[i], 10)) || (parseInt(endIP[i], 10) > parseInt(cookieEndIP[i], 10)) || (parseInt(startIP[i], 10) > parseInt(endIP[i], 10))) {
+                            if ((parseInt(startIP[i], 10) < parseInt(cookieStartIP[i], 10)) || (parseInt(endIP[i], 10) > parseInt(cookieEndIP[i], 10)) || compareRange(startIP, endIP)) {
                                 checkFlag = false;
                                 if(!checkFlag) break;
                             }
@@ -155,13 +152,13 @@ export default function SignIn() {
 
                         // 시작 IP 주소가 끝 IP 주소보다 작은지 확인합니다.
                         for (let i = 0; i < 4; i++) {
-                            if ((parseInt(startIP[i], 10) < startIpParts[i]) || (parseInt(endIP[i], 10) > endIpParts[i]) || (parseInt(startIP[i], 10) > parseInt(endIP[i], 10))) {
+                            if ((parseInt(startIP[i], 10) < startIpParts[i]) || (parseInt(endIP[i], 10) > endIpParts[i]) || compareRange(startIP, endIP)) {
                                 checkFlag = false;
                                 if(!checkFlag) break;
                             }
                         }
                     }
-
+                    //이번 입력 ip가 이번 쿠키에 아무 문제 없이 속할 경우 다음 ip에 대해 검사하자
                     if(checkFlag) break;
                 } else if (cidrRegex.test(input)) {
                     //입력값이 cidr일때
@@ -213,15 +210,15 @@ export default function SignIn() {
                             }
                         }
                     }
-
+                    //이번 입력 ip가 이번 쿠키에 아무 문제 없이 속할 경우 다음 ip에 대해 검사하자
                     if(checkFlag) break;
                 } else {
                     checkFlag = false;
                 }
-
+                //쿠키 IP 대해서 문제가 있다면
                 if(checkFlag) break;
             }
-
+            //입력한 IP가 문제가 있다면
             if(checkFlag===false) break;
         }
         return checkFlag;
