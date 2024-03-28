@@ -302,7 +302,7 @@ export default function SignIn() {
                     title: '사용자 계정 수정',
                     html: `<div style="font-size: 14px;">정말 이대로 계정을 수정하시겠습니까?</div>`,
                     confirmButtonText: '수정',
-                    confirmButtonColor: 'blue.200',
+                    confirmButtonColor: '#3965FF',
                     focusConfirm: false,
                     cancelButtonText: '닫기',
                     showCancelButton: true,
