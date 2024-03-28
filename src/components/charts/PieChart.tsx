@@ -36,13 +36,14 @@ class PieChart extends React.Component<ChartProps, ChartState> {
 
   render () {
     if (!isWindowAvailable()) return null; // 또는 다른 처리 방법을 사용
+    
     return (
       <Chart
         options={this.state.chartOptions}
         series={this.state.chartData}
-        type='pie'
+        type='donut'
         width='100%'
-        height='55%'
+        height='100%'
       />
     )
   }

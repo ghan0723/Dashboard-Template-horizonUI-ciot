@@ -1,0 +1,83 @@
+/* 스타일 클래스 정의 */
+.custom-popup-class {
+    width: 400px; /* 팝업 전체 너비 조절 */
+  }
+  
+  .custom-title-class {
+    font-size: 18px; /* 제목 폰트 크기 조절 */
+  }
+  
+  .custom-content-class {
+    font-size: 14px; /* 텍스트 폰트 크기 조절 */
+  }
+
+  .swal2-popup .swal2-styled.swal2-confirm {
+    background-color: #3965FF;
+    outline: none;
+    font-size: 16px;
+    color: white;
+  }
+
+  .swal2-popup .swal2-styled.swal2-confirm:focus {
+    box-shadow: none;
+  }
+
+  .swal2-popup .swal2-styled.swal2-confirm:active {
+    box-shadow: none;
+  }
+
+  .swal2-popup .swal2-styled.swal2-cancel {
+    background-color: white;
+    outline: none;
+    font-size: 16px;
+    color: #EE5D50;
+  }
+
+  .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-confirm:hover {
+    background-color: white;
+    color: #3965FF;
+    background-image: none;
+  }
+
+  .swal2-popup .swal2-actions:not(.swal2-loading) .swal2-cancel:hover {
+    background-color: #EE5D50;
+    color: white;
+    background-image: none;
+  }
+
+  .custom-confirm-button-class:hover {
+    filter : brightness(80%)  !important;
+    color : white !important;
+  }
+  
+  .custom-confirm-class {
+    width: 84px;
+  }
+  .custom-cancel-class{
+    width: 84px;
+  }
+  /* .custom-confirm-button-class:active,
+  .custom-confirm-button-class:focus {
+    font-size: 16px !important; /* 확인 버튼 폰트 크기 조절 
+    border-color: #7A4C07 !important; /* 테두리 색상 조절 
+    box-shadow: none !important; /* 포커스 또는 액티브 시 그림자 제거 
+    outline: none !important;
+  } */
+
+
+  .resizer {
+    position: absolute;
+    top : 0;
+    right: 0;
+    height: 100%;
+    width: 5px;
+    /* background: rgba(0, 0, 0, 0.5); */
+    cursor: col-resize;
+    user-select: none;
+    touch-action: none;
+  }
+  
+  .resizer.isResizing {
+    background: '#e0e0e0';
+    opacity: 1;
+  }

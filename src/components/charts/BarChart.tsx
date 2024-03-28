@@ -5,24 +5,36 @@ import { ChartProps, ChartState } from './LineAreaChart'
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
 
 class ColumnChart extends React.Component<ChartProps, ChartState> {
-  constructor (props: ChartState) {
+  state: ChartState = {
+    chartData: [],
+    chartOptions: {}
+  }
+
+  constructor(props: ChartProps) {
     super(props)
-    this.state = {
-      chartData: [],
-      chartOptions: {}
+  }
+
+  componentDidMount() {
+    if (isWindowAvailable()) {
+      this.setState({
+        chartData: this.props.chartData ?? [],
+        chartOptions: this.props.chartOptions ?? {}
+      });
     }
   }
 
-  componentDidMount () {
-    this.setState({
-      chartData: this.props.chartData,
-      chartOptions: this.props.chartOptions
-    })
+
+  componentDidUpdate(prevProps: Readonly<ChartProps>, prevState: Readonly<ChartState>, snapshot?: any): void {
+    if (prevProps.chartData !== this.props.chartData || prevProps.chartOptions !== this.props.chartOptions) {
+      this.setState({
+        chartData: this.props.chartData ?? [],
+        chartOptions: this.props.chartOptions ?? {}
+      });
+    }
   }
 
-  render () {
-    if (!isWindowAvailable()) return <></>
-
+  render() {
+    if (!isWindowAvailable()) return null; // 또는 다른 처리 방법을 사용
     return (
       <Chart
         options={this.state.chartOptions}

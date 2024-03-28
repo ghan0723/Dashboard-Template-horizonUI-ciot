@@ -9,13 +9,14 @@ export default function LineChart ({
   chartOptions,
   chartData
 }: LineChartProps) {
+  
   return (
     <Chart
       options={chartOptions}
       series={chartData}
       type='line'
-      width='100%'
-      height='100%'
+      width={'100%'}
+      height={'100%'}
     />
   )
 }

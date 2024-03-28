@@ -45,3 +45,11 @@
   font-display: swap;
   src: url(/fonts/dm-sans/DMSans-Bold.ttf) format('truetype');
 }
+
+@font-face {
+  font-family: 'KoPub';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url(/fonts/KoPub/KoPubDotumBold.ttf) format('truetype');
+}

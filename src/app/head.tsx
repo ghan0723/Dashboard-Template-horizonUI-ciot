@@ -7,7 +7,7 @@ export default function RootHead() {
 			<link
 				rel="shortcut icon"
 				type="image/x-icon"
-				href={process.env.NEXT_PUBLIC_BASE_PATH || 'ciot (주)시옷 File-Weasel' + '/favicon.ico'}
+				href={process.env.NEXT_PUBLIC_BASE_PATH || 'Weasel' + '/favicon.ico'}
 			/>
 
 		  <title>ciot security program</title>

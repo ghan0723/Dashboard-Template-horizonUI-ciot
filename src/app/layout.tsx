@@ -6,7 +6,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="ko">
       <head>
-        <title>ciot (주)시옷 File-Weasel Dashboard</title>
+        <title>Weasel</title>
       </head>
       <body id={'root'}>
         <AppWrappers>{children}</AppWrappers>

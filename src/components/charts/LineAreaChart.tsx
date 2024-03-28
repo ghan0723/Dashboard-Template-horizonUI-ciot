@@ -7,6 +7,7 @@ const Chart = dynamic(() => import('react-apexcharts'), { ssr: false })
 export type ChartState = {
   chartData: ApexAxisChartSeries | ApexNonAxisChartSeries
   chartOptions: ApexOptions
+  width?: string
 }
 
 export type ChartProps = ChartState & {

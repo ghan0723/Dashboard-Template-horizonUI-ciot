@@ -31,7 +31,7 @@ export default function SidebarDocs() {
         top="-47px"
         transform="translate(-50%, 0%)"
       >
-        <Image alt="" src={logoWhite} w="40px" h="40px" />
+        {/* <Image alt="g2" src={logoWhite} w="40px" h="40px" /> */}
       </Flex>
       <Flex
         direction="column"
@@ -50,7 +50,7 @@ export default function SidebarDocs() {
           px="10px"
           mb="14px"
         >
-          Upgrade to PRO
+          Upprivilege to PRO
         </Text>
         <Text
           fontSize="14px"
@@ -75,7 +75,7 @@ export default function SidebarDocs() {
           minW="185px"
           mx="auto"
         >
-          Upgrade to PRO
+          Upprivilege to PRO
         </Button>
       </Link>
     </Flex>

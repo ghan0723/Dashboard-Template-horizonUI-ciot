@@ -144,7 +144,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               borderRadius="8px"
               mb="10px"
             >
-              <ItemContent info="오늘자 Network Data 수집" />
+              <ItemContent info="금일 Network Data 수집" />
             </MenuItem>
             <MenuItem
               _hover={{ bg: 'none' }}
@@ -153,7 +153,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
               borderRadius="8px"
               mb="10px"
             >
-              <ItemContent info="오늘자 Media Data 수집" />
+              <ItemContent info="금일 Media Data 수집" />
             </MenuItem>
           </Flex>
         </MenuList>

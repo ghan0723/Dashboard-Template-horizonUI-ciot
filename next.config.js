@@ -5,7 +5,7 @@ const nextConfig = {
       return [
         {
           source : '/api/:path*',
-          destination : 'http://localhost:8000/api/:path*'
+          destination : 'https://172.31.168.110:8000/api/:path*'
         },
 
       ]
@@ -19,9 +19,23 @@ const nextConfig = {
       'i.ibb.co',
       'scontent.fotp8-1.fna.fbcdn.net',
     ],
-    // Make ENV
     unoptimized: true,
+    // remotePatterns: [
+    //   {
+    //     protocol: 'http',
+    //     hostname: 'localhost',
+    //   },
+    // ],
+    // Make ENV
   },
+  reactStrictMode: false,
+  // serverRuntimeConfig: {
+
+  // }
+  env : {
+    AUTH0_SESSION_ROLLING: process.env.AUTH0_SESSION_ROLLING,
+    AUTH0_SESSION_ROLLING_DURATION: process.env.AUTH0_SESSION_ROLLING_DURATION,
+  }
 };
 
 // module.exports = withTM(nextConfig);

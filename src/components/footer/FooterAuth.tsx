@@ -51,7 +51,7 @@ export default function Footer(props: { [x: string]: any }) {
           </Link>
         </Text>
       </Text>
-      <List display="flex">
+      {/* <List display="flex">
         <ListItem
           me={{
             base: '20px',
@@ -103,7 +103,7 @@ export default function Footer(props: { [x: string]: any }) {
             Blog
           </Link>
         </ListItem>
-      </List>
+      </List> */}
     </Flex>
   );
 }

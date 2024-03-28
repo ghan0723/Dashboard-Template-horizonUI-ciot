@@ -12,7 +12,26 @@ import { RiArrowUpSFill } from 'react-icons/ri';
 import { lineChartDataTotalSpent, lineChartOptionsTotalSpent } from 'variables/charts';
 
 export default function TotalSpent(props: { [x: string]: any }) {
-	const { ...rest } = props;
+	// const { ...rest } = props;
+	const {data, day, height, outlookFlag} = props;
+	const title = ['네트워크', '저장매체', '프린터'];
+	const outLookTitle = ['네트워크', '저장매체', 'Outlook', '프린터'];
+
+	let newData:any = [];
+	if(outlookFlag === true) {
+		for(let i=0; i < data.length-1; i++) {
+			newData.push(data[i]);
+			newData[i].name = outLookTitle[i];
+		}
+	} else {
+		for(let i=0; i < data.length-1; i++) {
+			newData.push(data[i]);
+			newData[i].name = title[i];
+		}
+	}
+
+	const monthArray = data[data.length-1];
+	
 
 	// Chakra Color Mode
 
@@ -25,6 +44,19 @@ export default function TotalSpent(props: { [x: string]: any }) {
 	const bgFocus = useColorModeValue({ bg: 'secondaryGray.300' }, { bg: 'whiteAlpha.100' });
 
 	const [ mounted, setMounted ] = useState(false);
+	let dayStr;
+
+	switch(day) {
+		case 'day':
+			dayStr = '금일'
+		break;
+		case 'month':
+			dayStr = '금월'
+		break;
+		default :
+			dayStr = '금주'
+		break;
+	}
 
 	useEffect(() => {
 		const timeout = setTimeout(() => {
@@ -36,57 +68,48 @@ export default function TotalSpent(props: { [x: string]: any }) {
 	}, []);
 
 	return (
-		<Card justifyContent='center' alignItems='center' flexDirection='column' w='100%' mb='0px' {...rest}>
-			<Flex justify='space-between' ps='0px' pe='20px' pt='5px' w='100%'>
-				<Flex align='center' w='100%'>
-					<Button bg={boxBg} fontSize='sm' fontWeight='500' color={textColorSecondary} borderRadius='7px'>
-						<Icon as={MdOutlineCalendarToday} color={textColorSecondary} me='4px' />
-						This month
-					</Button>
-					<Button
-						ms='auto'
-						alignItems='center'
-						justifyContent='center'
-						bg={bgButton}
-						_hover={bgHover}
-						_focus={bgFocus}
-						_active={bgFocus}
-						w='37px'
-						h='37px'
-						lineHeight='100%'
-						borderRadius='10px'
-						{...rest}>
-						<Icon as={MdBarChart} color={iconColor} w='24px' h='24px' />
-					</Button>
-				</Flex>
+		<Card justifyContent='center' alignItems='center' justifyItems='center' flexDirection='column' w='100%' h={height} mb='0px' borderRadius={'0px'} p={'0px'} >
+			<Flex height={'40px'} maxH={'40px'} minH={'40px'} alignSelf={'start'} width={'100%'} mt={'10px'} mb='8px' pl={'10px'} pr={'10px'}
+			>
+				<Text w='100%' justifySelf={'center'} lineHeight={'40px'} color={'#03619E'} fontSize={'18px'} fontWeight={900}
+				>
+						{dayStr} 정보유출 건수
+				</Text>
 			</Flex>
-			<Flex w='100%' flexDirection={{ base: 'column', lg: 'row' }}>
-				<Flex flexDirection='column' me='20px' mt='28px'>
-					<Text color={textColor} fontSize='34px' textAlign='start' fontWeight='700' lineHeight='100%'>
-						$37.5K
-					</Text>
-					<Flex align='center' mb='20px'>
-						<Text color='secondaryGray.600' fontSize='sm' fontWeight='500' mt='4px' me='12px'>
-							Total Spent
+			<Flex h={'100%'} w={'100%'}>				
+				<Card w={'15%'} px={'15px'}>
+					<Flex alignItems={'center'} mb={'5px'}>
+						<Box h='8px' w='8px' bg='#3498db' borderRadius='50%' me='4px' alignSelf={'center'} />
+						<Text fontSize='12px' color='secondaryGray.600' fontWeight='700' h={'100%'} alignSelf={'center'}>
+							네트워크
 						</Text>
-						<Flex align='center'>
-							<Icon as={RiArrowUpSFill} color='green.500' me='2px' mt='2px' />
-							<Text color='green.500' fontSize='sm' fontWeight='700' lineHeight='100%'>
-								+2.45%
+					</Flex>
+					<Flex alignContent={'center'} mb={'5px'}>
+						<Box h='8px' w='8px' bg='#e74c3c' borderRadius='50%' me='4px' alignSelf={'center'} />
+						<Text fontSize='12px' color='secondaryGray.600' fontWeight='700'>
+							저장매체
+						</Text>
+					</Flex>
+					{
+						outlookFlag === true ? 
+						<Flex alignContent={'center'} mb={'5px'}>
+							<Box h='8px' w='8px' bg='#2ecc71' borderRadius='50%' me='4px' alignSelf={'center'} />
+							<Text fontSize='12px' color='secondaryGray.600' fontWeight='700'>
+								Outlook
 							</Text>
-						</Flex>
-					</Flex>
-
-					<Flex align='center'>
-						<Icon as={IoCheckmarkCircle} color='green.500' me='4px' />
-						<Text color='green.500' fontSize='md' fontWeight='700'>
-							On track
+					    </Flex> :
+						<></>
+					}
+					<Flex alignContent={'center'} mb={'5px'}>
+						<Box h='8px' w='8px' bg= {outlookFlag === true ? '#9b59b6' : '#2ecc71'} borderRadius='50%' me='4px' alignSelf={'center'} />
+						<Text fontSize='12px' color='secondaryGray.600' fontWeight='700'>
+							프린터
 						</Text>
 					</Flex>
+				</Card>
+				<Flex flex={1} direction={'column'}>
+					<LineChart chartData={newData} chartOptions={lineChartOptionsTotalSpent(monthArray)} />
 				</Flex>
-				<Box minH='260px' minW='75%' mt='auto'>
-					<LineChart chartData={lineChartDataTotalSpent} chartOptions={lineChartOptionsTotalSpent} />
-				</Box>
 			</Flex>
 		</Card>
 	);

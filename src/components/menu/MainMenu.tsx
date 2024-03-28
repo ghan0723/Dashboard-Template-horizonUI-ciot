@@ -82,7 +82,7 @@ export default function Banner(props: { [x: string]: any }) {
 					<Flex align='center'>
 						<Icon as={MdOutlinePerson} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
-							설정 1
+							Network
 						</Text>
 					</Flex>
 				</MenuItem>
@@ -102,7 +102,7 @@ export default function Banner(props: { [x: string]: any }) {
 					<Flex align='center'>
 						<Icon as={MdOutlineCardTravel} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
-							Panel 2
+							Media
 						</Text>
 					</Flex>
 				</MenuItem>
@@ -119,10 +119,12 @@ export default function Banner(props: { [x: string]: any }) {
 						bg: 'transparent'
 					}}
 					mb='10px'>
-					<Flex align='center'>
+					<Flex align='center'
+					
+					>
 						<Icon as={MdOutlineLightbulb} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
-							Panel 3
+							Outlook
 						</Text>
 					</Flex>
 				</MenuItem>
@@ -141,7 +143,7 @@ export default function Banner(props: { [x: string]: any }) {
 					<Flex align='center'>
 						<Icon as={MdOutlineSettings} h='16px' w='16px' me='8px' />
 						<Text fontSize='sm' fontWeight='400'>
-							Panel 4
+							Print
 						</Text>
 					</Flex>
 				</MenuItem>

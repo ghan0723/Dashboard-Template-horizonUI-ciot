@@ -49,7 +49,7 @@ export default function Footer() {
           </Link>
         </Text>
       </Text>
-      <List display="flex">
+      {/* <List display="flex">
         <ListItem
           me={{
             base: '20px',
@@ -101,7 +101,7 @@ export default function Footer() {
             Blog(이건 우리 회사 주소 or git)
           </Link>
         </ListItem>
-      </List>
+      </List> */}
     </Flex>
   );
 }

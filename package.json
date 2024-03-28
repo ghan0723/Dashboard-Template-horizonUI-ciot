@@ -18,7 +18,9 @@
     "@testing-library/user-event": "^12.8.3",
     "@types/jest": "^25.2.3",
     "@types/react-dom": "^18.0.6",
+    "@types/react-image-magnify": "^2.7.4",
     "apexcharts": "^3.45.0",
+    "axios": "^1.6.7",
     "framer-motion": "^4.1.17",
     "next": "^13.3.2",
     "react": "18.2.0",
@@ -28,15 +30,18 @@
     "react-dom": "18.2.0",
     "react-dropzone": "^12.0.4",
     "react-icons": "^4.3.1",
+    "react-image-magnify": "^2.7.4",
     "react-is": "^18.0.0",
     "react-no-ssr": "^1.1.0",
+    "react-paginate-chakra-ui": "^0.1.2",
     "stylis": "^4.1.1",
     "stylis-plugin-rtl": "2.0.2",
+    "sweetalert2": "^11.10.4",
     "typescript": "^4.7.4",
     "web-vitals": "^1.1.2"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --experimental-https --experimental-https-key ./certs/privKey.pem --experimental-https-cert ./certs/cert.pem",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
@@ -56,6 +61,7 @@
     ]
   },
   "devDependencies": {
+    "@next/react-refresh-utils": "^14.1.0",
     "@types/node": "^18.7.6",
     "@types/react": "18.2.0",
     "@types/react-calendar": "^3.5.2",

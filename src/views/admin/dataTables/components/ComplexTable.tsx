@@ -14,8 +14,6 @@ import * as React from 'react';
 // Assets
 import { MdCancel, MdCheckCircle, MdOutlineError } from 'react-icons/md';
 
-
-
 type RowObj = {
 	name: string;
 	status: string;
@@ -145,7 +143,7 @@ export default function ComplexTable(props: { tableData: any }) {
 		<Card flexDirection='column' w='100%' px='0px' overflowX={{ sm: 'scroll', lg: 'hidden' }}>
 			<Flex px='25px' mb="8px" justifyContent='space-between' align='center'>
 				<Text color={textColor} fontSize='22px' fontWeight='700' lineHeight='100%'>
-					Complex Table
+					1주일간 위험 분자
 				</Text>
 				<Menu />
 			</Flex>

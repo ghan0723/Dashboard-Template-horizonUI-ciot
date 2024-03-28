@@ -1,5 +1,6 @@
-import { AtSignIcon, EmailIcon } from '@chakra-ui/icons';
+import { AtSignIcon, EmailIcon, RepeatIcon, StarIcon } from '@chakra-ui/icons';
 import { Icon } from '@chakra-ui/react';
+import { IoMdAnalytics } from 'react-icons/io';
 import {
   MdBarChart,
   MdPerson,
@@ -7,70 +8,118 @@ import {
   MdLock,
   MdOutlineShoppingCart,
   MdCarCrash,
+  MdPerson3,
+  MdOutlinePerson3,
+  MdPeople,
+  MdModeEdit,
+  MdSettings,
+  MdFileCopy,
+  MdAnalytics,
 } from 'react-icons/md';
-
-// Admin Imports
-// import MainDashboard from './pages/admin/default';
-// import NFTMarketplace from './pages/admin/nft-marketplace';
-// import Profile from './pages/admin/profile';
-// import DataTables from './pages/admin/data-tables';
-// import RTL from './pages/rtl/rtl-default';
-
-// Auth Imports
-// import SignInCentered from './pages/auth/sign-in';
 import { IRoute } from 'types/navigation';
 
 const routes: IRoute[] = [
   {
     name: 'Dashboard',
-    layout: '/admin',
+    layout: '/dashboard',
     path: '/default',
     icon: <Icon as={AtSignIcon} width="20px" height="20px" color="inherit" />,
   },
   {
     name: '유출탐지내역',
-    layout: '/admin',
-    path: '/nft-marketplace',
-    icon: (
-      <Icon
-        as={EmailIcon}
-        width="20px"
-        height="20px"
-        color="inherit"
-      />
-    ),
+    layout: '/data',
+    path: '',
     secondary: true,
-  },
-  {
-    name: 'Media',
-    layout: '/admin',
+    secondaryLinks: [
+      {
+        name: '유출탐지내역',
+        path: '/tables'
+      },
+      {
+        name: '관리대상 목록',
+        path: '/leaked'
+      }
+    ],
     icon: <Icon as={MdBarChart} width="20px" height="20px" color="inherit" />,
-    path: '/data-tables',
   },
   {
-    name: 'Printer',
-    layout: '/admin',
-    path: '/profile',
-    icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
+    name: '분석',
+    layout: '/analytics',
+    path: '/main',
+    icon: <Icon as={IoMdAnalytics} width="20px" height="20px" color="inherit" />,
   },
   {
-    name: 'Sign In',
+    name: '사용자 관리',
+    layout: '/users',
+    path: '',
+    secondary: true,
+    secondaryLinks: [
+      {
+        name: '사용자 관리',
+        path: '/control'
+      },
+      {
+        name: '본인정보수정',
+        path: '/edit'
+      }
+    ],
+    icon: <Icon as={MdPeople} width="20px" height="20px" color="inherit" />,
+  },
+  {
+    name: '로그인',
     layout: '/auth',
     path: '/sign-in',
     icon: <Icon as={MdLock} width="20px" height="20px" color="inherit" />,
   },
   {
     name: '설정',
-    layout: '/rtl',
-    path: '/rtl-default',
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    layout: '/setting',
+    path: '',
+    icon: <Icon as={MdSettings} width="20px" height="20px" color="inherit" />,
+    secondary: true,
+    secondaryLinks: [{
+      name: '서버',
+      path: '/server',
+    },
+    {
+      name: '에이전트',
+      path: '/agent',
+    }
+    ],
   },
   {
-    name: 'ciot dashboard',
-    layout : '/ciot',
-    path : '/default',
-    icon: <Icon as={MdCarCrash} width="20px" height="20px" color="inherit"></Icon>,
+    name: '로그',
+    layout: '/log',
+    path: '',
+    icon: <Icon as={MdFileCopy} width="20px" height="20px" color="inherit" />,
+    secondary: true,
+    secondaryLinks: [{
+      name: '감사 로그',
+      path: '/config'
+    },
+    {
+      name: '에러 로그',
+      path: '/error',
+    }
+    ]
   },
+  {
+    name: '로그아웃',
+    layout: '/profile',
+    path: '/logout',
+    icon: <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />,
+  },
+  {
+    name: '비밀번호 변경',
+    layout: '/pwd',
+    path: '/freq',
+    icon: <Icon as={MdOutlinePerson3} width="20px" height="20px" color="inherit" />,
+  },
+  {
+    name: '팝업창',
+    layout: '/notice',
+    path: '/popup',
+  }
 ];
 
 export default routes;

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { backIP } from "utils/ipDomain";
 
 type RowObj = {
 	name: string;
@@ -32,22 +33,21 @@ type DataItem = {
 	asked_file: Number
 };
 
-const fetchData = async (): Promise<DataItem[]> => {
-	try {
-	  const response = await fetch('http://localhost:8000/api/detectfiles');
-	  const dataItem = await response.json();
-	  return dataItem;
-	} catch (error) {
-	  console.error('Error fetching data:', error);
-	  return [];
-	}
-  };
+// const fetchData = async (): Promise<DataItem[]> => {
+// 	try {
+// 	  const response = await fetch(`${backIP}/api/detectfiles`);
+// 	  const dataItem = await response.json();
+// 	  return dataItem;
+// 	} catch (error) {
+// 	  return [];
+// 	}
+//   };
 
-  const selectDetectFiles = async (): Promise<DataItem[]> => {
-	const data = await fetchData();
-	return data;
-	// return data;
-  };
+//   const selectDetectFiles = async (): Promise<DataItem[]> => {
+// 	const data = await fetchData();
+// 	return data;
+// 	// return data;
+//   };
 
 const tableDataComplex: RowObj[] = [
 	{
@@ -75,4 +75,4 @@ const tableDataComplex: RowObj[] = [
 		date: '24 Oct 2022'
 	}
 ];
-export default selectDetectFiles;
+// export default selectDetectFiles;
