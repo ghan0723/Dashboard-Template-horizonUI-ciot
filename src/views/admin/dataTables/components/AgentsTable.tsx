@@ -470,11 +470,11 @@ export default function AgentsTable(
                 {table !== undefined &&
                   table.getRowModel()
                     .rows.slice(0, rows)
-                    .map((row) => {
+                    .map((row) => {                      
                       return (
                         <Tr key={row.id} borderBottom={'2px solid #f0f0f0'} 
                         _hover={{ backgroundColor: '#F2F7FF' }}>
-                          {row.getVisibleCells().map((cell) => {                            
+                          {row.getVisibleCells().map((cell) => {       
                             return (
                               <Td
                                 textAlign={ agentInfoAlias[cell.getContext().column.id]?.align }
