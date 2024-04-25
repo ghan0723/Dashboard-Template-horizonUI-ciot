@@ -7,6 +7,7 @@ import { SortingState } from '@tanstack/react-table';
 import { getNameCookie } from 'utils/cookie';
 import { backIP } from 'utils/ipDomain';
 import { fetchLogic } from 'utils/fetchData';
+import Swal from 'sweetalert2';
 
 export default function DataTables() {
   const [intervalTime, setIntervalTime] = useState<any>(0);
