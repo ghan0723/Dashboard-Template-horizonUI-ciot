@@ -6,7 +6,7 @@ import Links from 'components/sidebar/components/Links';
 import SidebarCard from 'components/sidebar/components/SidebarCard';
 import { useEffect, useState } from 'react';
 import { IRoute } from 'types/navigation';
-import { backIP } from 'utils/ipDomain';
+import { backIP, frontIP } from 'utils/ipDomain';
 
 // FUNCTIONS
 
@@ -25,7 +25,11 @@ function SidebarContent(props: SidebarContentProps) {
 				credentials:'include',
 			});			
 			const data = await response.json();
-			setPrivilege(data[0]?.privilege);
+			if(data[0]?.privilege === null && data[0]?.privilege === undefined){
+				window.location.href = `${frontIP}/auth/sign-in`;
+			} else {
+				setPrivilege(data[0]?.privilege);
+			}
 		}
 		fetchPrivilege();
 	}, []);

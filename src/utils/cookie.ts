@@ -1,5 +1,6 @@
 import { redirect } from 'next/navigation';
 import { backIP, frontIP } from './ipDomain';
+import Swal from 'sweetalert2';
 
 export const getCookie = (cookieName: string) => {  
   if (typeof window === 'undefined') {
@@ -36,8 +37,27 @@ export const getNameCookie = async (): Promise<string | null> => {
     });
     
     const data = await response.json();
+    // 쿠키 시간이 만료 되었을 때
     if (data.username === undefined || data.username === null) {
-      window.location.href = `${frontIP}/auth/sign-in`;
+      Swal.fire({
+        title: '쿠키 만료',
+        html: `<div style="font-size: 14px;">세션이 만료되어 로그아웃 됩니다.</div>`,
+        confirmButtonText: '닫기',
+        confirmButtonColor: '#EE5D50',
+        focusConfirm: false,
+        customClass: {
+          popup: 'custom-popup-class',
+          title: 'custom-title-class',
+          loader: 'custom-content-class',
+          confirmButton: 'custom-confirm-button-class'
+        },
+      })
+      .then((response) => {
+        if(response.isConfirmed) {
+          window.location.href = `${frontIP}/auth/sign-in`;
+        }
+      });
+            
       return null;
     } else {
       return data.username;
