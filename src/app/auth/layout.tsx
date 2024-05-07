@@ -7,7 +7,6 @@ import { Box, useColorModeValue } from '@chakra-ui/react';
 // Layout components
 import { SidebarContext } from 'contexts/SidebarContext';
 import { isWindowAvailable } from 'utils/navigation';
-import { getAccount } from 'utils/cookie';
 
 // Custom Chakra theme
 

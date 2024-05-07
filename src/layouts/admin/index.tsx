@@ -2,7 +2,6 @@
 import { Portal, Box, useDisclosure } from '@chakra-ui/react'
 import Footer from 'components/footer/FooterAdmin'
 // Layout components
-import Navbar from 'components/navbar/NavbarAdmin'
 import Sidebar from 'components/sidebar/Sidebar'
 import { SidebarContext } from 'contexts/SidebarContext'
 import { PropsWithChildren, useEffect, useState } from 'react'

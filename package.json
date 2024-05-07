@@ -43,7 +43,7 @@
   "scripts": {
     "dev": "next dev --port 3030 --experimental-https --experimental-https-key ./certs/privKey.pem --experimental-https-cert ./certs/cert.pem",
     "build": "next build",
-    "start": "next start",
+    "start": "node server.js",
     "lint": "next lint",
     "predeploy": "yarn run build",
     "deploy": "gh-pages -d build"
