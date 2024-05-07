@@ -32,7 +32,7 @@ export function SidebarBrand() {
 			m={'0 55% 0 45%'}
 			onClick = {brandClick}
 			>
-				<Img alt='위즐 로고임' src='../../../img/dashboards/weasel_logo22.png'
+				<Img alt='위즐 로고임' src='/img/dashboards/Weasel_logo22.png'
 				// w='190px' h='230px' 
 				// m={'0 55% 0 45%'}
 				></Img>
