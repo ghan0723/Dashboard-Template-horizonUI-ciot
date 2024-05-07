@@ -20,6 +20,6 @@ app.prepare().then(() => {
     handle(req, res, parsedUrl);
   }).listen(3030, (err) => {
     if (err) throw err;
-    console.log('> Ready on https://172.31.168.112:3030');
+    console.log('> Ready on https://localhost:3030');
   });
 });
