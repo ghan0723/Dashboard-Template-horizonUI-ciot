@@ -191,6 +191,9 @@ export default function SignIn() {
     }
   }
 
+  console.log('updateFile',updateFile);
+  
+
   const addProcessEnterKey = async (e: any) => {
     if (e.key === 'Enter' && procName !== undefined && procName !== null && procName !== '') {
       e.preventDefault();

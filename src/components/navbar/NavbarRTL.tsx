@@ -148,11 +148,6 @@ export default function AdminNavbar (props: {
           </Link>
         </Box>
         <Box ms='auto' w={{ sm: '100%', md: 'unset' }}>
-          <AdminNavbarLinks
-            onOpen={props.onOpen}
-            secondary={secondary}
-            fixed={fixed}
-          />
         </Box>
       </Flex> 
     </Box>
