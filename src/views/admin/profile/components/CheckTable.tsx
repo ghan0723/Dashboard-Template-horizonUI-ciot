@@ -131,7 +131,7 @@ export default function CheckTable(
   const removeUser = async (selectedRows: string[]) => {
     try {
       const username = await getNameCookie();
-      const response = await fetch(`${backIP}/user/rm?username=${username}&category=${category}&=searchWord=${searchWord}`, {
+      const response = await fetch(`${backIP}/user/rm?username=${username}&category=${category}&searchWord=${searchWord}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
