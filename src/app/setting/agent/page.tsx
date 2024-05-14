@@ -409,7 +409,7 @@ export default function SignIn() {
     } else {
       const cookieName = await getNameCookie();
       e.preventDefault();
-      const response = await fetch(`${backIP}/setting/agent?username=${cookieName}`, {
+      const response = await fetch(`${backIP}/setting/agents?username=${cookieName}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -467,7 +467,7 @@ export default function SignIn() {
               type='button'
               fontSize="12px"
               bgColor={"white"}
-              color={'#aaa'}
+              color={'black'}
               border={'1px solid #ccc'}
               w="80px"
               h="25px"

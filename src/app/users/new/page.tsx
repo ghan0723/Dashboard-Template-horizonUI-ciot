@@ -496,7 +496,7 @@ export default function SignIn() {
                         type='submit'
                         fontSize="12px"
                         bgColor={"white"}
-                        color={'#aaa'}
+                        color={'black'}
                         border={'1px solid #ccc'}
                         _focus={{ boxShadow: 'none' }}
                         _active={{ boxShadow: 'none' }}
