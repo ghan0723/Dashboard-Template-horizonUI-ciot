@@ -18,8 +18,8 @@ app.prepare().then(() => {
   createServer(options, async (req, res) => {
     const parsedUrl = parse(req.url, true);
     handle(req, res, parsedUrl);
-  }).listen(3000, (err) => {
+  }).listen(3001, (err) => {
     if (err) throw err;
-    console.log('> Ready on https://172.31.168.110:3000');
+    console.log('> Ready on https://localhost:3001');
   });
 });

@@ -30,7 +30,7 @@ import { useRouter } from 'next/navigation';
 import { backIP } from 'utils/ipDomain';
 import { userSwal } from 'components/swal/customSwal';
 import Swal from 'sweetalert2';
-import { compareRange, isValidIPAddress } from 'utils/valid';
+import { compareRange, validateIPRange } from 'utils/valid';
 
 export default function SignIn() {
     // Chakra color mode
@@ -96,136 +96,6 @@ export default function SignIn() {
         setRange(selectedRange);
     };
 
-    function validateIPRange(ipRange: string): boolean {
-        let   checkFlag:boolean;
-        const cidrRegex = /^(\d{1,3}\.){3}\d{1,3}(\/\d{1,2})?$/;
-        const ipRangeRegex = /^(\d{1,3}\.){3}\d{1,3}-(\d{1,3}\.){3}\d{1,3}$/;
-        // 사용자 입력을 줄바꿈 또는 쉼표를 기준으로 자릅니다.
-        const inputs: string[] = ipRange.trim().split(/[\r\n,]+\s*/);
-        //현재 로그인 한 아이디의 IP 대역을 계산한다.
-        const cookieIPs: string[] = cookieRange.trim().split(/[\r\n,]+\s*/);
-        
-        // 각 입력에 대해 형식을 검사합니다.
-        for (const input of inputs) {
-            for (const cookieIP of cookieIPs) {
-                checkFlag=true;
-                if (ipRangeRegex.test(input)) {
-                    // checkFlag.push(true);
-                    
-                    // 입력값이 ip 일때
-                    const ipAddresses: string[] = input.split("-");
-                    const startIP: string[] = ipAddresses[0].trim().split(".");
-                    const endIP: string[] = ipAddresses[1].trim().split(".");
-                    if(ipRangeRegex.test(cookieIP)){
-                        //쿠키가 ip 일때
-                        const cookieIpAddresses: string[] = cookieIP.split("-");
-                        const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
-                        const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
-
-                        // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
-                        if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
-                            checkFlag = false;
-                        }
-                        // 시작 IP 주소가 끝 IP 주소보다 작은지 확인합니다.
-                        for (let i = 0; i < 4; i++) {
-                            if ((parseInt(startIP[i], 10) < parseInt(cookieStartIP[i], 10)) || (parseInt(endIP[i], 10) > parseInt(cookieEndIP[i], 10)) || compareRange(startIP, endIP)) {
-                                checkFlag = false;
-                                if(!checkFlag) break;
-                            }
-                        }
-                    } else if (cidrRegex.test(cookieIP)){
-                        //쿠키가 cidr일때
-                        const [ip, cidr] = cookieIP.split("/");
-                        const parts = ip.split(".").map(part => parseInt(part, 10));
-                        const cidrBits = parseInt(cidr, 10);
-                        const cidrMask = (0xffffffff << (32 - cidrBits)) >>> 0;
-                        const startIpParts = parts.map((part, index) => part & ((cidrMask >> (24 - 8 * index)) & 0xff));
-                        const endIpParts = parts.map((part, index) => part | ((~cidrMask >> (24 - 8 * index)) & 0xff));
-
-                        // IP 주소의 각 자리수를 확인하고 유효한지 검사합니다.
-                        function isValidIPAddress(ip: string[]): boolean {
-                            return ip.every(part => /^\d+$/.test(part) && parseInt(part, 10) >= 0 && parseInt(part, 10) <= 255);
-                        }
-
-                        // 시작 IP 주소와 끝 IP 주소가 유효한지 확인합니다.
-                        if (startIP.length !== 4 || endIP.length !== 4 || !isValidIPAddress(startIP) || !isValidIPAddress(endIP)) {
-                            checkFlag = false;
-                        }
-
-                        // 시작 IP 주소가 끝 IP 주소보다 작은지 확인합니다.
-                        for (let i = 0; i < 4; i++) {
-                            if ((parseInt(startIP[i], 10) < startIpParts[i]) || (parseInt(endIP[i], 10) > endIpParts[i]) || compareRange(startIP, endIP)) {
-                                checkFlag = false;
-                                if(!checkFlag) break;
-                            }
-                        }
-                    }
-                    //이번 입력 ip가 이번 쿠키에 아무 문제 없이 속할 경우 다음 ip에 대해 검사하자
-                    if(checkFlag) break;
-                } else if (cidrRegex.test(input)) {
-                    //입력값이 cidr일때
-                    const [ip, cidr] = input.split("/");
-                    const parts = ip.split(".").map(part => parseInt(part, 10));
-                    const cidrBits = parseInt(cidr, 10);
-                    const cidrMask = (0xffffffff << (32 - cidrBits)) >>> 0;
-                    const startIpParts = parts.map((part, index) => part & ((cidrMask >> (24 - 8 * index)) & 0xff));
-                    const endIpParts = parts.map((part, index) => part | ((~cidrMask >> (24 - 8 * index)) & 0xff));
-                    if(cidrRegex.test(cookieIP)){
-                        //쿠키도 cidr일때
-                        const [cookieip, cookieCidr] = cookieIP.split("/");
-                        const cookieParts = cookieip.split(".").map(part => parseInt(part, 10));
-                        const cookieCidrBits = parseInt(cookieCidr, 10);
-                        const cookieCidrMask = (0xffffffff << (32 - cookieCidrBits)) >>> 0;
-                        const cookieStartIP = cookieParts.map((part, index) => part & ((cookieCidrMask >> (24 - 8 * index)) & 0xff));
-                        const cookieEndIP = cookieParts.map((part, index) => part | ((~cookieCidrMask >> (24 - 8 * index)) & 0xff));
-                        if (parts.some(part => isNaN(part) || part < 0 || part > 255)) {
-                            checkFlag = false; // IP 주소의 각 자리수가 0에서 255 사이의 값을 가져야 합니다.
-                        } 
-                        const cidrValue = parseInt(cidr, 10);
-                        if (isNaN(cidrValue) || cidrValue < 0 || cidrValue > 32 ) {
-                        // || cidrValue % 8 !== 0) {
-                            checkFlag = false; // CIDR 접두사는 0에서 32 사이의 값을 가져야 하며, 8의 배수여야 합니다.
-                        }
-                        for(let i = 0; i< parts.length; i++){
-                            if(startIpParts[i] < cookieStartIP[i] || endIpParts[i] > cookieEndIP[i]){
-                                checkFlag = false;
-                                if(!checkFlag) break;
-                            }
-                        }
-                    } else if (ipRangeRegex.test(cookieIP)){
-                        //쿠키가 그냥ip일때
-                        const cookieIpAddresses: string[] = cookieIP.split("-");
-                        const cookieStartIP: string[] = cookieIpAddresses[0].trim().split(".");
-                        const cookieEndIP: string[] = cookieIpAddresses[1].trim().split(".");
-                        if (parts.some(part => isNaN(part) || part < 0 || part > 255)) {
-                            checkFlag = false; // IP 주소의 각 자리수가 0에서 255 사이의 값을 가져야 합니다.
-                        } 
-                        const cidrValue = parseInt(cidr, 10);
-                        if (isNaN(cidrValue) || cidrValue < 0 || cidrValue > 32 ) {
-                        // || cidrValue % 8 !== 0) {
-                            checkFlag = false; // CIDR 접두사는 0에서 32 사이의 값을 가져야 하며, 8의 배수여야 합니다.
-                        }
-                        for(let i = 0; i< parts.length; i++){
-                            if(startIpParts[i] < parseInt(cookieStartIP[i], 10) || endIpParts[i] > parseInt(cookieEndIP[i], 10)){
-                                checkFlag = false;
-                                if(!checkFlag) break;
-                            }
-                        }
-                    }
-                    //이번 입력 ip가 이번 쿠키에 아무 문제 없이 속할 경우 다음 ip에 대해 검사하자
-                    if(checkFlag) break;
-                } else {
-                    checkFlag = false;
-                }
-                //쿠키 IP 대해서 문제가 있다면
-                if(checkFlag) break;
-            }
-            //입력한 IP가 문제가 있다면
-            if(checkFlag===false) break;
-        }
-        return checkFlag;
-    }
-
     const handleSubmit = async (event: any) => {
         event.preventDefault();
         const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[~!@#$%^&*()_\-+=\[\]{}`|;:'"<>,.?/]).{8,15}$/;
@@ -244,7 +114,7 @@ export default function SignIn() {
         } else if (range.length === 0) {
             userSwal(5, 'new');
             event.preventDefault();
-        } else if (!validateIPRange(range)) {
+        } else if (!validateIPRange(range,cookieRange)) {
             userSwal(99, "new", '#d33', "IP 대역의 값이 올바르지 않습니다. 다시 입력해주세요.");
             event.preventDefault();
         } else {
@@ -496,7 +366,7 @@ export default function SignIn() {
                         type='submit'
                         fontSize="12px"
                         bgColor={"white"}
-                        color={'#aaa'}
+                        color={'black'}
                         border={'1px solid #ccc'}
                         _focus={{ boxShadow: 'none' }}
                         _active={{ boxShadow: 'none' }}

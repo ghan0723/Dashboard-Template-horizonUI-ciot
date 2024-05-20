@@ -124,7 +124,7 @@ export default function SignIn() {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     onCloseAlert();
-    const response = await fetch(`${backIP}/setting/server?username=${userNameCookie}`, {
+    const response = await fetch(`${backIP}/setting/servers?username=${userNameCookie}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -170,7 +170,7 @@ export default function SignIn() {
               type='button'
               fontSize="12px"
               bgColor={"white"}
-              color={'#aaa'}
+              color={'black'}
               border={'1px solid #ccc'}
               w="80px"
               h="25px"
@@ -179,7 +179,7 @@ export default function SignIn() {
               borderRadius={'md'}
               onClick={alertOn}
             >
-              설정
+              적용
             </Button>
             {isOpenAlert === true ? (
               <AlertDialog
@@ -333,7 +333,7 @@ export default function SignIn() {
                   // ml={'26px'}
                   >
                     <Text w="175px" alignSelf='center' fontSize="md" fontWeight='600'>
-                      서버 업데이트 주기
+                      UI 업데이트 주기
                     </Text>
                   </FormLabel>
                   <Flex w={'100%'}>
