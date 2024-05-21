@@ -179,7 +179,7 @@ export default function SignIn() {
               borderRadius={'md'}
               onClick={alertOn}
             >
-              설정
+              적용
             </Button>
             {isOpenAlert === true ? (
               <AlertDialog
@@ -333,7 +333,7 @@ export default function SignIn() {
                   // ml={'26px'}
                   >
                     <Text w="175px" alignSelf='center' fontSize="md" fontWeight='600'>
-                      서버 업데이트 주기
+                      UI 업데이트 주기
                     </Text>
                   </FormLabel>
                   <Flex w={'100%'}>

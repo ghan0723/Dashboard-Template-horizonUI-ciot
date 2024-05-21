@@ -18,7 +18,7 @@ type ProcessData = {
 export default function Conversion(props: { [x: string]: any }) {
 	const { ...rest } = props !== undefined && props
 	const [count, setCount] = React.useState<ProcessData[]>([]);	//
-	const [select, setSelect] = React.useState('Network');
+	const [select, setSelect] = React.useState('네트워크');
 	const etcResult = count ? 100 - (count?.[0]?.hcount ?? 0) - (count?.[1]?.hcount ?? 0) - (count?.[2]?.hcount ?? 0) - (count?.[3]?.hcount ?? 0) : 0;
 	const chartData = [];
 	const chartOptionData = [];
@@ -55,9 +55,12 @@ export default function Conversion(props: { [x: string]: any }) {
 
 	const fetchCount = async (userNameCookie:string) => {
 		try {
-			const response = await fetch(`${backIP}/pie/count/${select}?day=${rest.day}&username=${userNameCookie}`);
+			const selectValue = select === '네트워크' ? 'Network' : 'Media';
+			const response = await fetch(`${backIP}/pie/count/${selectValue}?day=${rest.day}&username=${userNameCookie}`);
 			const data = await response.json();
 			setCount(data);
+			console.log('data',data);
+			
 		} catch (error) {
 		}
 	}
@@ -71,14 +74,16 @@ export default function Conversion(props: { [x: string]: any }) {
 				w='100%'
 				mt={'10px'}
 				mb='8px'
-				pl={'10px'} pr={'10px'}>
-				<Text color={'#03619E'} fontSize={'18px'} fontWeight={900}>
+				pl={'10px'} pr={'10px'}
+				>
+					{/* 240517, width={'10vw'} 추가, Select박스 네트워크/이동식 저장매체로 변경 후 Select박스 길이 변동에 따라 Text가 한줄로 표현되는 것이 두줄로 표현되어 width 설정 */}
+				<Text color={'#03619E'} fontSize={'18px'} fontWeight={900} >
 					Process 별 유출 건수
 				</Text>
-				<Select fontSize='sm' variant='subtle' defaultValue='Network' width='unset' fontWeight='700'
+				<Select fontSize='sm' variant='subtle' defaultValue='네트워크' width={'unset'} fontWeight='700'
 					onChange={(e) => setSelect(e.target.value)}>
-					<option value='Network'>Network</option>
-					<option value='Media'>Media</option>
+					<option value='네트워크'>네트워크</option>
+					<option value='이동식 저장매체'>이동식</option>
 					{/* <option value='Outlook'>Outlook</option>
 					<option value='Print'>Print</option> */}
 				</Select>

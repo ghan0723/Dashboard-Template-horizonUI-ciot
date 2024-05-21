@@ -34,8 +34,13 @@ export default function DataTables() {
   }, [outlookFlag])
 
   useEffect(() => {
-    fetchIntervalTime();
-    fetchLog();
+    // fetchIntervalTime이 다 끝난 후에 fetchLog()를 실행
+    const initialize = async () => {
+      await fetchIntervalTime();
+      await fetchLog();
+    };
+  
+    initialize();
   }, []);
 
   useEffect(() => {
@@ -55,7 +60,6 @@ export default function DataTables() {
   }, [isOpen]);
 
   useEffect(() => {
-
     if (intervalTime !== undefined && intervalTime !== null && intervalTime !== 0 && userNameCookie.current !== undefined) {
       const timer: number = +intervalTime[0]?.svr_ui_refresh_interval * 1000;
 
@@ -71,10 +75,10 @@ export default function DataTables() {
 
   }, [intervalTime, page, rows, sorting, url, searchComfirm]);
 
-  const fetchLog = async () => {
-    const cookieValue = await getNameCookie();
-    userNameCookie.current = cookieValue;
-    fetchLogic(`log/tables?username=${cookieValue}`);
+  const fetchLog = async () => {    
+    console.log('userNameCookie.current fetchLog',userNameCookie.current);
+    
+    await fetchLogic(`log/tables?username=${userNameCookie.current}`);
   }
 
   const fetchOutlookFlag = async () => {
@@ -83,6 +87,9 @@ export default function DataTables() {
 
   const fetchIntervalTime = async () => {
     try {
+      const cookieValue = await getNameCookie();
+      userNameCookie.current = cookieValue;
+      console.log('userNameCookie.current fetchIntervalTime',userNameCookie.current);
       await fetchLogic("setting/intervalTime", setIntervalTime);
     } catch (error) {
     }
