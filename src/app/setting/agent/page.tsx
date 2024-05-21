@@ -476,7 +476,7 @@ export default function SignIn() {
               borderRadius={'md'}
               onClick={alertOn}
             >
-              설정
+              적용
             </Button>
             {isOpenAlert === true ? (
               <AlertDialog

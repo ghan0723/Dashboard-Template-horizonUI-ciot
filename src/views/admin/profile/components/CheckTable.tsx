@@ -17,6 +17,7 @@ import { AddIcon, DeleteIcon, SearchIcon } from '@chakra-ui/icons';
 import { getNameCookie } from 'utils/cookie';
 import { backIP } from 'utils/ipDomain';
 import { userAlias } from 'utils/alias';
+import Swal from 'sweetalert2';
 
 const columnHelper = createColumnHelper();
 
@@ -124,8 +125,27 @@ export default function CheckTable(
   };
 
   const handleDeleteSelectedRows = () => {
-    const selectedRows = Object.keys(checkedRows).filter((rowId) => checkedRows[rowId]);
-    removeUser(selectedRows);
+    Swal.fire({
+      title: '사용자 계정 삭제',
+      html: `<div style="font-size: 14px;">선택한 계정을 삭제하시겠습니까?</div>`,
+      confirmButtonText: '삭제',
+      confirmButtonColor: '#3965FF',
+      focusConfirm: false,
+      cancelButtonText: '닫기',
+      showCancelButton: true,
+      customClass: {
+        popup: 'custom-popup-class',
+        title: 'custom-title-class',
+        htmlContainer: 'custom-content-class',
+        container: 'custom-content-class',
+        confirmButton: 'custom-confirm-button-class'
+      },
+    }).then((result)=>{
+      if(result.isConfirmed) {
+        const selectedRows = Object.keys(checkedRows).filter((rowId) => checkedRows[rowId]);
+        removeUser(selectedRows);
+      }
+    })
   };
 
   const removeUser = async (selectedRows: string[]) => {
