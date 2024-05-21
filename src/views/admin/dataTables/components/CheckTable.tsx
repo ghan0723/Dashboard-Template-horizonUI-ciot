@@ -64,6 +64,7 @@ import { IoMdDownload, IoMdRefresh } from 'react-icons/io';
 import { MdOutlineWarning } from 'react-icons/md';
 import { mediaAlias, networkAlias, outlookAlias, printAlias } from 'utils/alias';
 import { IoReload } from 'react-icons/io5';
+import Swal from 'sweetalert2';
 
 const columnHelper = createColumnHelper();
 
@@ -402,7 +403,26 @@ export default function CheckTable(
     if (selectedRows.length === 0) {
       setIsOpenAlert(true);
     } else {
-      removeData(selectedRows);
+      Swal.fire({
+         title: '유출 내역 삭제',
+         html: `<div style="font-size: 14px;">선택한 유출 내역을 삭제하시겠습니까?</div>`,
+         confirmButtonText: '삭제',
+         confirmButtonColor: '#3965FF',
+         focusConfirm: false,
+         cancelButtonText: '닫기',
+         showCancelButton: true,
+         customClass: {
+           popup: 'custom-popup-class',
+           title: 'custom-title-class',
+           htmlContainer: 'custom-content-class',
+           container: 'custom-content-class',
+           confirmButton: 'custom-confirm-button-class'
+         },
+       }).then((result)=>{
+         if(result.isConfirmed) {
+           removeData(selectedRows);
+         }
+      })
     }
   };
 
