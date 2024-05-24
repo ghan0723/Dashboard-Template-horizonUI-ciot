@@ -44,11 +44,13 @@ export default function DataTables() {
   }, []);
 
   useEffect(() => {
-    fetchData();
+    if(userNameCookie.current !== undefined) {
+      fetchData();
+    }
   }, [userNameCookie]);
 
   useEffect(() => {
-    if (!isOpen) {
+    if (!isOpen && userNameCookie.current !== undefined) {
       const timerId = setTimeout(() => {
         fetchData();
       }, 300);
@@ -76,8 +78,6 @@ export default function DataTables() {
   }, [intervalTime, page, rows, sorting, url, searchComfirm]);
 
   const fetchLog = async () => {    
-    console.log('userNameCookie.current fetchLog',userNameCookie.current);
-    
     await fetchLogic(`log/tables?username=${userNameCookie.current}`);
   }
 
@@ -89,7 +89,6 @@ export default function DataTables() {
     try {
       const cookieValue = await getNameCookie();
       userNameCookie.current = cookieValue;
-      console.log('userNameCookie.current fetchIntervalTime',userNameCookie.current);
       await fetchLogic("setting/intervalTime", setIntervalTime);
     } catch (error) {
     }

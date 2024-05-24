@@ -59,8 +59,6 @@ export default function Conversion(props: { [x: string]: any }) {
 			const response = await fetch(`${backIP}/pie/count/${selectValue}?day=${rest.day}&username=${userNameCookie}`);
 			const data = await response.json();
 			setCount(data);
-			console.log('data',data);
-			
 		} catch (error) {
 		}
 	}
