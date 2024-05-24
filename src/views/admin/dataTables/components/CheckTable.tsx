@@ -762,8 +762,8 @@ export default function CheckTable(
                           cursor="pointer"
                           whiteSpace="nowrap"
                           pt='5px' pb='5px'
-                          pl={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '0px'}
-                          pr={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '7px'}
+                          pl={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린 덤프' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '0px'}
+                          pr={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린 덤프' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '7px'}
                           // width={header.id === 'id' ? '3%' : header.getSize()}
                           // minW={header.id === 'id' ? '3%' : '50px'}
                           width={columnWidths[header.id]?.width}
@@ -864,7 +864,7 @@ export default function CheckTable(
             <Modal isOpen={isOpen} onClose={onClose}>
               <ModalOverlay />
               <ModalContent width='70vw' height='70vh' maxW="80vw" maxH="80vh">
-                <ModalHeader>Screen Shots</ModalHeader>
+                <ModalHeader>스크린 덤프</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody
                   w='70vw'

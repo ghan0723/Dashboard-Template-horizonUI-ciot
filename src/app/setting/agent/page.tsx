@@ -894,7 +894,7 @@ export default function SignIn() {
                       onChange={(e) => handleCheckBoxChange(e, 128)}
                     ></Checkbox>
                     <Text alignSelf="center" fontSize="md" fontWeight='600'>
-                      탐지 시 스크린샷 자동 생성 및 다운로드
+                      탐지 시 스크린 덤프 자동 생성 및 다운로드
                     </Text>
                   </FormLabel>
                 </Flex>
