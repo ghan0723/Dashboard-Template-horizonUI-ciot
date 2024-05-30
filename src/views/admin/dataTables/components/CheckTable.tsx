@@ -435,7 +435,6 @@ export default function CheckTable(
       fetch(`${backIP}/api/refresh?contents=` + name + `&id=` + screenshotId + '&name=screenshot');
     } else {
       setSelectedScreenshot(screenshotName);
-      onOpen();
       // Regular expression to match the date pattern
       const dateRegex = /\b(\d{4}-\d{2}-\d{2})/;
       // Extract the date using the regular expression
@@ -443,8 +442,26 @@ export default function CheckTable(
   
       // Check if a match is found and get the date
       const extractedDate = match ? match[1] : null;
-  
-      setScreenshotDate(extractedDate);
+      const screenshotPath = `${backIP}/Detects/${extractedDate}/${screenshotName}.png`;
+      
+      fetch(`${backIP}/api/decfile`, {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body : JSON.stringify({
+          fileId:screenshotId,
+          filePath:screenshotPath
+        })
+      })
+      .then(async (res) => {        
+        if(res.status === 200) {
+          onOpen();
+          setScreenshotDate(extractedDate);
+        }
+      })
+      .catch((error) => {
+      });
     }
   };
 
@@ -468,12 +485,38 @@ export default function CheckTable(
       const parts = downloadPath.split('^^');
       const fileName = parts[parts.length - 1];
       const anchor = document.createElement('a');
-      anchor.href = await toDataURL(downloadPath);
-      anchor.download = fileName;
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-      fetchDownload(fileName);
+
+      fetch(`${backIP}/api/decfile`, {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body : JSON.stringify({
+          fileId:downLoadId,
+          filePath:downloadPath
+        })
+      })
+      .then(async (res) => {        
+        if(res.status === 200) {
+          anchor.href = await toDataURL(downloadPath);
+          anchor.download = fileName;
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+          fetchDownload(fileName);
+          await fetch(`${backIP}/api/deleteDecfile`, {
+            method : 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body : JSON.stringify({
+              filePath:downloadPath
+            })
+          });
+        }
+      })
+      .catch((error) => {
+      });
     }
   }
   async function toDataURL(url: any) {
@@ -483,6 +526,7 @@ export default function CheckTable(
 
   //이미지 다운로드 버튼
   const handleImageDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // 기존
     const downloadId = e.currentTarget.name;
     const link = document.createElement('a');
     const parts = downloadId.split('^^');
@@ -493,8 +537,29 @@ export default function CheckTable(
     document.body.appendChild(link);
     link.click(); // 클릭하여 다운로드 시작
     document.body.removeChild(link); // 다운로드 후에는 제거
+
+    // enc 적용 후
+
     fetchScreenshot(fileName);
   }
+
+  // 스크린 덤프 modal close
+  const screenshotClose = () => {
+    const filePath = `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`;
+    
+    fetch(`${backIP}/api/deleteDecfile`, {
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body : JSON.stringify({
+        filePath
+      })
+    });
+
+    onClose();
+  }
+
   // fetch
   // 더미 데이터 생성
   // 추후 hidden(Test용으로 dummy data를 만들기 때문에)
@@ -881,7 +946,7 @@ export default function CheckTable(
             </Flex>
             {/* <Button onClick={onOpen}>Open Modal</Button> */}
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpen} onClose={screenshotClose}>
               <ModalOverlay />
               <ModalContent width='70vw' height='70vh' maxW="80vw" maxH="80vh">
                 <ModalHeader>스크린 덤프</ModalHeader>
