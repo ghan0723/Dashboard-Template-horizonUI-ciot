@@ -86,7 +86,7 @@ export const networkAlias: any = {
       width : 50,
     },
     ScreenShot: {
-      name : "스크린샷", // 17
+      name : "스크린 덤프", // 17
       align : 'center',
       width : 50,
     },

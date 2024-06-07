@@ -205,7 +205,7 @@ export default function SignIn() {
                       </InputRightElement>
                     </InputGroup>
                     <Text lineHeight={'10'} ml={'10px'} color={'#A09997'}>
-                      8 ~ 16자리로 영문 대소문자, 숫자, 특수문자 조합
+                      8 ~ 15자리로 영문 대소문자, 숫자, 특수문자 조합
                     </Text>
                   </Flex>
                   <Flex>

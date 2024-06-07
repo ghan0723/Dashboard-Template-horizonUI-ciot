@@ -107,6 +107,8 @@ export default function CheckTable(
     Object.keys(tableData[0][0]));
 	// State로 컬럼 너비 관리
 	const [columnWidths, setColumnWidths] = React.useState<{ [key: string]: { name:string, align:string, width:number } }>(networkAlias);
+  const [imageSrc, setImageSrc] = React.useState('');
+  const [imageLoaded, setImageLoaded] = React.useState(false);
 
   // useState => ui 화면에서 render가 잘 되게 하기위해 사용
   // search => useRef를 이용하여 변경 값을 바로 적용하게끔 사용
@@ -275,6 +277,28 @@ export default function CheckTable(
 
   }, [tableData]);
 
+  React.useEffect(() => {
+    const filePaths = [
+      `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`,
+      `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`,
+      `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`
+    ];
+
+    filePaths.forEach((filePath) => {
+      const img = new window.Image();
+      img.onload = () => {
+        if (!imageLoaded) {
+          setImageSrc(filePath);
+          setImageLoaded(true);
+        }
+      };
+      // img.onerror = () => {
+      //   console.log(`Failed to load image: ${filePath}`);
+      // };
+      img.src = filePath;
+    });
+  }, [isOpen]);
+
   // page 렌더링
   React.useEffect(() => {
     getNameCookie().then((username) => {
@@ -435,7 +459,6 @@ export default function CheckTable(
       fetch(`${backIP}/api/refresh?contents=` + name + `&id=` + screenshotId + '&name=screenshot');
     } else {
       setSelectedScreenshot(screenshotName);
-      onOpen();
       // Regular expression to match the date pattern
       const dateRegex = /\b(\d{4}-\d{2}-\d{2})/;
       // Extract the date using the regular expression
@@ -443,8 +466,31 @@ export default function CheckTable(
   
       // Check if a match is found and get the date
       const extractedDate = match ? match[1] : null;
-  
-      setScreenshotDate(extractedDate);
+      // const screenshotPath = `${backIP}/Detects/${extractedDate}/${screenshotName}.png`;      
+
+      const screenshotPath = [];
+      screenshotPath.push(`${backIP}/Detects/${extractedDate}/${screenshotName}.png`);
+      screenshotPath.push(`${backIP}/Detects/${extractedDate}/${screenshotName}.jpg`);
+      screenshotPath.push(`${backIP}/Detects/${extractedDate}/${screenshotName}.jpeg`);
+      
+      fetch(`${backIP}/api/decfile`, {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body : JSON.stringify({
+          fileId:screenshotId,
+          filePath:screenshotPath
+        })
+      })
+      .then(async (res:any) => {        
+        if(res.status === 200) {
+          onOpen();
+          setScreenshotDate(extractedDate);
+        }
+      })
+      .catch((error) => {
+      });
     }
   };
 
@@ -468,12 +514,38 @@ export default function CheckTable(
       const parts = downloadPath.split('^^');
       const fileName = parts[parts.length - 1];
       const anchor = document.createElement('a');
-      anchor.href = await toDataURL(downloadPath);
-      anchor.download = fileName;
-      document.body.appendChild(anchor);
-      anchor.click();
-      document.body.removeChild(anchor);
-      fetchDownload(fileName);
+
+      fetch(`${backIP}/api/decfile`, {
+        method : 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body : JSON.stringify({
+          fileId:downLoadId,
+          filePath:[downloadPath]
+        })
+      })
+      .then(async (res) => {        
+        if(res.status === 200) {
+          anchor.href = await toDataURL(downloadPath);
+          anchor.download = fileName;
+          document.body.appendChild(anchor);
+          anchor.click();
+          document.body.removeChild(anchor);
+          fetchDownload(fileName);
+          await fetch(`${backIP}/api/deleteDecfile`, {
+            method : 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body : JSON.stringify({
+              filePath:[downloadPath]
+            })
+          });
+        }
+      })
+      .catch((error) => {
+      });
     }
   }
   async function toDataURL(url: any) {
@@ -483,6 +555,7 @@ export default function CheckTable(
 
   //이미지 다운로드 버튼
   const handleImageDownload = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    // 기존
     const downloadId = e.currentTarget.name;
     const link = document.createElement('a');
     const parts = downloadId.split('^^');
@@ -493,8 +566,35 @@ export default function CheckTable(
     document.body.appendChild(link);
     link.click(); // 클릭하여 다운로드 시작
     document.body.removeChild(link); // 다운로드 후에는 제거
+
+    // enc 적용 후
+
     fetchScreenshot(fileName);
   }
+
+  // 스크린 덤프 modal close
+  const screenshotClose = () => {
+    // const filePath = `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`;
+
+    const filePath = [];
+    filePath.push(`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`);
+    filePath.push(`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`);
+    filePath.push(`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`);
+    
+    fetch(`${backIP}/api/deleteDecfile`, {
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body : JSON.stringify({
+        filePath
+      })
+    });
+
+    onClose();
+    setImageLoaded(false);
+  }
+
   // fetch
   // 더미 데이터 생성
   // 추후 hidden(Test용으로 dummy data를 만들기 때문에)
@@ -607,7 +707,8 @@ export default function CheckTable(
       onMouseDown: (e: React.MouseEvent) => {
       handleColumnResize(columnId, e.clientX);
       },
-    });    
+    });
+    
 
   // html
   if (data === undefined || data === null || keys.current === undefined) {
@@ -782,8 +883,8 @@ export default function CheckTable(
                           cursor="pointer"
                           whiteSpace="nowrap"
                           pt='5px' pb='5px'
-                          pl={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '0px'}
-                          pr={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린샷' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '7px'}
+                          pl={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린 덤프' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '0px'}
+                          pr={name === 'network' && (headerText !== '파일다운로드' && headerText !== '스크린 덤프' && headerText !== '출발지 Port' && headerText !== '목적지 Port' && headerText !== '프로토콜') ? '10px' : '7px'}
                           // width={header.id === 'id' ? '3%' : header.getSize()}
                           // minW={header.id === 'id' ? '3%' : '50px'}
                           width={columnWidths[header.id]?.width}
@@ -881,10 +982,10 @@ export default function CheckTable(
             </Flex>
             {/* <Button onClick={onOpen}>Open Modal</Button> */}
 
-            <Modal isOpen={isOpen} onClose={onClose}>
+            <Modal isOpen={isOpen} onClose={screenshotClose}>
               <ModalOverlay />
               <ModalContent width='70vw' height='70vh' maxW="80vw" maxH="80vh">
-                <ModalHeader>Screen Shots</ModalHeader>
+                <ModalHeader>스크린 덤프</ModalHeader>
                 <ModalCloseButton />
                 <ModalBody
                   w='70vw'
@@ -892,15 +993,43 @@ export default function CheckTable(
                   maxW="80vw"
                   maxH="80vh"
                 >
-                  <Image p={'0px'} m={'0px'} w={'70vw'} height={'57vh'} alt='' src={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png` || `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}></Image>
-                  <Button><Link target='_blank' href={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png` || `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}>확대</Link></Button>
-                  <Button
-                    onClick={handleImageDownload}
-                    name={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png` || `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}
-                    id={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png` || `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}
-                  >
-                    다운로드
-                  </Button>
+                  {
+                    imageSrc === `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png` ?
+                    <>
+                      <Image p={'0px'} m={'0px'} w={'70vw'} height={'57vh'} alt='' src={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`}></Image>
+                      <Button ><Link target='_blank' href={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`}>확대</Link></Button>
+                      <Button
+                        onClick={handleImageDownload}
+                        name={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`}
+                        id={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`}
+                      >
+                        다운로드
+                      </Button>
+                    </> :
+                    imageSrc === `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg` ?
+                    <>
+                      <Image p={'0px'} m={'0px'} w={'70vw'} height={'57vh'} alt='' src={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}></Image>
+                      <Button ><Link target='_blank' href={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}>확대</Link></Button>
+                      <Button
+                        onClick={handleImageDownload}
+                        name={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}
+                        id={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`}
+                      >
+                        다운로드
+                      </Button>
+                    </> :
+                    <>
+                      <Image p={'0px'} m={'0px'} w={'70vw'} height={'57vh'} alt='' src={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`}></Image>
+                      <Button ><Link target='_blank' href={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`}>확대</Link></Button>
+                      <Button
+                        onClick={handleImageDownload}
+                        name={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`}
+                        id={`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`}
+                      >
+                        다운로드
+                      </Button>
+                    </>
+                  }
                 </ModalBody>
               </ModalContent>
             </Modal>
