@@ -38,17 +38,15 @@ export default function DataTables() {
     if (intervalTime !== undefined && intervalTime !== null && intervalTime !== 0 && userNameCookie !== undefined && userNameCookie !== null) {
       const timer: number = +intervalTime[0]?.svr_ui_refresh_interval * 1000;
       fetchData();
-      const intervalId = setInterval(() => {
-        fetchData();
-      }, timer);
+      // const intervalId = setInterval(() => {
+      //   fetchData();
+      // }, timer);
 
-      chkIntervalId.current = intervalId;
-      
-      
+      // chkIntervalId.current = intervalId;
 
-      return () => {
-        clearInterval(intervalId);
-      }
+      // return () => {
+      //   clearInterval(intervalId);
+      // }
     }
 
   }, [intervalTime, page, rows, sorting, searchComfirm]);
@@ -143,6 +141,7 @@ export default function DataTables() {
         search={search}
         searchResult={searchResult} setSearchResult={setSearchResult}
         searchComfirm={searchComfirm} setSearchComfirm={setSearchComfirm}
+        fetchData={fetchData}
       />
     </Box>
   );

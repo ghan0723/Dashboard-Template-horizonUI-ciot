@@ -302,7 +302,7 @@ export const networkAlias: any = {
       width : 300,
     },
     'time' : {
-      name : '업데이트 시각',                   // 1
+      name : 'PC정보 자동 업데이트 시각',                   // 1
       align : 'center',
       width : 300,
     },
@@ -313,6 +313,16 @@ export const networkAlias: any = {
     },
     'latest_agent_ip' : {
       name : 'Agent Ip',           // 3
+      align : 'center',
+      width : 300,
+    },
+    'agent_name' : {
+      name : 'PC 사용자 명',           // 3
+      align : 'center',
+      width : 300,
+    },
+    'agent_department' : {
+      name : 'PC 사용자 부서 명',           // 3
       align : 'center',
       width : 300,
     },

@@ -30,23 +30,28 @@ import {
 import Card from 'components/card/Card';
 import { Paginate } from 'react-paginate-chakra-ui';
 import { EditIcon, SearchIcon } from '@chakra-ui/icons';
-import { FaSortDown, FaSortUp } from 'react-icons/fa';
+import { FaSave, FaSortDown, FaSortUp } from 'react-icons/fa';
 import { getNameCookie } from 'utils/cookie';
 import { backIP, frontIP } from 'utils/ipDomain';
 import { RiFileExcel2Fill, RiScreenshot2Fill } from 'react-icons/ri';
 import { agentInfoAlias } from 'utils/alias';
+import Swal from 'sweetalert2';
 
 const columnHelper = createColumnHelper();
-
+type EditableDataState = {
+  [rowIndex: number]: {
+    [columnId: string]: any;
+  };
+};
 // const columns = columnsDataCheck;
 export default function AgentsTable(
   props: {
     tableData: any; setTableData: any; rows: any; setRows: any; page: any; setPage: any; sorting: any; setSorting: any; search: any;
-    searchResult: any; setSearchResult: any; searchComfirm: boolean; setSearchComfirm: any;
+    searchResult: any; setSearchResult: any; searchComfirm: boolean; setSearchComfirm: any; fetchData:any;
   },
   { children }: { children: React.ReactNode },
 ) {
-  const { tableData, setTableData, rows, setRows, page, setPage, sorting, setSorting, search, searchResult, setSearchResult, searchComfirm, setSearchComfirm } = props;
+  const { tableData, setTableData, rows, setRows, page, setPage, sorting, setSorting, search, searchResult, setSearchResult, searchComfirm, setSearchComfirm, fetchData } = props;
   const [data, setData] = React.useState(() => {
     return tableData !== undefined && tableData;
   });
@@ -59,12 +64,14 @@ export default function AgentsTable(
     tableData[0] !== null &&
     tableData[0].length !== 0 ?
     Object.keys(tableData[0][0]) : undefined);    
-
   // useState => ui 화면에서 render가 잘 되게 하기위해 사용
   // search => useRef를 이용하여 변경 값을 바로 적용하게끔 사용
   const [searchValue, setSearchValue] = React.useState(search.current); // 렌더링 될 때 값이 바로 변경할 수 있도록 설정
 
   const [columnWidths, setColumnWidths] = React.useState<{ [key: string]: {name:string, align:string, width:number} }>(agentInfoAlias);
+  const [agentName, setAgentName] = React.useState('');
+  const [agentDepartment, setAgentDepartment] = React.useState('');
+
 
   function formatDate(date: any): string {
     // date가 문자열인 경우에 대한 보완도 추가
@@ -92,6 +99,7 @@ export default function AgentsTable(
     return formattedDate;
   }
 
+
   let i: number;
   let str: string = '';
   let columns = [];
@@ -114,26 +122,25 @@ export default function AgentsTable(
         },
         cell: (info: any) => {
           return (
-                <Tooltip label={info.getValue() !== undefined && info.getValue() !== null && 
-                                ((info.column.id === 'Time') ? formatDate(info.getValue()) : info.getValue()
-                              )}>
-                  <Text
-                    color={textColor}
-                    // fontSize="s"
-                    fontSize="13px"
-                    fontWeight="400"
-                    maxWidth="100%" // 또는 적절한 최대 너비 설정
-                    overflow="hidden"
-                    whiteSpace="nowrap"
-                    textOverflow="ellipsis"
-                    display="inline-block" // 또는 "block"
-                  >
-                    {info.getValue() !== undefined &&
-                      info.getValue() !== null &&
-                      ((info.column.id === 'Time') ? formatDate(info.getValue()) : info.getValue())
-                    }
-                  </Text>
-                </Tooltip>
+            <Tooltip label={info.getValue() !== undefined && info.getValue() !== null &&
+              ((info.column.id === 'Time') ? formatDate(info.getValue()) : info.getValue()
+            )}>
+                <Text
+                  color={textColor}
+                  fontSize="13px"
+                  fontWeight="400"
+                  maxWidth="100%" // 또는 적절한 최대 너비 설정
+                  overflow="hidden"
+                  whiteSpace="nowrap"
+                  textOverflow="ellipsis"
+                  display="inline-block" // 또는 "block"
+                >
+                  {info.getValue() !== undefined &&
+                    info.getValue() !== null &&
+                    ((info.column.id === 'Time') ? formatDate(info.getValue()) : info.getValue())
+                  }
+                </Text>
+            </Tooltip>
           );
         },
       }),
@@ -297,6 +304,58 @@ export default function AgentsTable(
     });
   }
 
+  //PC 사용자 명과 PC 사용자 부서명 편집을 위한 state랑 method들
+  const [editableData, setEditableData] = React.useState<EditableDataState>({});
+  
+  const handleEditCell = (rowIndex: number, columnId: string, value: any) => {
+    setEditableData((prevState) => ({
+      ...prevState,
+      [rowIndex]: {
+        ...prevState[rowIndex],
+        [columnId]: value,
+      },
+    }));
+  };
+
+  const saveEditableData = async (rowIndex:any, columnId:any, value:any, original:any) => {
+    try {
+      const response = await fetch(`${backIP}/api/leaked`, {
+        method:'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body:JSON.stringify({rowIndex, columnId, value, original}),
+      });
+      if(response.ok){
+        let htmlText = ``;
+        if(columnId === 'agent_name'){
+          htmlText = `<div style="font-size: 14px;">관리대상 Agent의 PC 사용자 명이 변경되었습니다.</div>`
+        } else {
+          htmlText = `<div style="font-size: 14px;">관리대상 Agent의 PC 사용자 부서 명이 변경되었습니다.</div>`
+        }
+        Swal.fire({
+          title: '관리대상 Agent 변경',
+          html: htmlText,
+          confirmButtonText: '완료',
+          confirmButtonColor: '#3965FF',
+          focusConfirm: false,
+          customClass: {
+            popup: 'custom-popup-class',
+            title: 'custom-title-class',
+            htmlContainer: 'custom-content-class',
+            container: 'custom-content-class',
+            confirmButton: 'custom-confirm-button-class'
+          },
+        }).then((result)=>{
+          if(result.isConfirmed) {
+            fetchData();
+          }
+       })
+      }
+    } catch (error) {
+      console.error('Error saving data:', error);
+    }
+  }
   // html
   if (data === undefined || data === null || keys.current === undefined) {
     return (
@@ -474,7 +533,16 @@ export default function AgentsTable(
                       return (
                         <Tr key={row.id} borderBottom={'2px solid #f0f0f0'} 
                         _hover={{ backgroundColor: '#F2F7FF' }}>
-                          {row.getVisibleCells().map((cell) => {       
+                          {row.getVisibleCells().map((cell) => {
+                            const isEditable = cell.column.id === 'agent_name' || cell.column.id === 'agent_department';
+                            const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                            handleEditCell(cell.row.index, cell.column.id, e.target.value);
+                            };
+                            const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+                              if (e.key === 'Enter') {
+                                saveEditableData(cell.row.index, cell.column.id, editableData[cell.row.index]?.[cell.column.id] || cell.getValue(), cell.row.original);
+                              }
+                            };
                             return (
                               <Td
                                 textAlign={ agentInfoAlias[cell.getContext().column.id]?.align }
@@ -489,9 +557,43 @@ export default function AgentsTable(
                                 cursor={'pointer'}
                                 onClick={() => handleCopyText(cell.column.id,cell.row.original)}
                               >
-                                {flexRender(
-                                  cell.column.columnDef.cell,
-                                  cell.getContext(),
+                                {isEditable ? (
+                                  <Flex minW={'100%'} align="center">
+                                    <input
+                                      type="text"
+                                      value={editableData[cell.row.index]?.[cell.column.id] || cell.getValue()}
+                                      onChange={handleInputChange}
+                                      onKeyDown={handleKeyDown}
+                                      style={{
+                                        color: textColor,
+                                        fontSize: '13px',
+                                        fontWeight: '400',
+                                        maxWidth: '100%',
+                                        width:'100%',
+                                        overflow: 'hidden',
+                                        whiteSpace: 'nowrap',
+                                        textOverflow: 'ellipsis',
+                                        textAlign: 'center',
+                                        marginRight: '8px',
+                                        height:'32px'
+                                      }}
+                                    />
+                                    <IconButton
+                                      aria-label="Save"
+                                      icon={<FaSave />}
+                                      size="sm"
+                                      border={'1px solid black'}
+                                      borderRadius={'0'}
+                                      color={'black'}
+                                      backgroundColor={'white'}
+                                      onClick={() => saveEditableData(cell.row.index, cell.column.id, editableData[cell.row.index]?.[cell.column.id] || cell.getValue(), cell.row.original)}
+                                    />
+                                  </Flex>
+                                ) : (
+                                  flexRender(
+                                    cell.column.columnDef.cell,
+                                    cell.getContext(),
+                                  )
                                 )}
                               </Td>
                             );
