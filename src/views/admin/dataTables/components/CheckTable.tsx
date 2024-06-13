@@ -570,24 +570,24 @@ export default function CheckTable(
   const screenshotClose = async () => {
     // const filePath = `${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`;
 
-    // const filePath = [];
+    const filePath = [];
     // filePath.push(`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.png`);
-    // filePath.push(`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`);
+    filePath.push(`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpg`);
     // filePath.push(`${backIP}/Detects/${screenshotDate}/${selectedScreenshot}.jpeg`);
     
-    // const response = await fetch(`${backIP}/api/deleteDecfile`, {
-    //   method : 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    //   body : JSON.stringify({
-    //     filePath
-    //   })
-    // });
-    // if(response.ok){
+    const response = await fetch(`${backIP}/api/deleteDecfile`, {
+      method : 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body : JSON.stringify({
+        filePath
+      })
+    });
+    if(response.ok){
       onClose();
       setImageLoaded(false);
-    // }
+    }
   }
 
   // fetch
